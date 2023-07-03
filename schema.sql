@@ -52,7 +52,7 @@ CREATE TABLE Calendar (
 );
 
 CREATE TABLE Review (
-    reviewId INT,
+    reviewId INT  NOT NULL AUTO INCREMENT,
     comment TEXT,
     rating INT,
     PRIMARY KEY (reviewId)
@@ -86,7 +86,7 @@ CREATE TABLE Renter_Cancels_Booking (
     FOREIGN KEY (bookingId) REFERENCES Booking (bookingId)
 );
 
-CREATE TABLE Host_Comment_Renter (
+CREATE TABLE Host_Review_Renter (
     host_userId INT,
     renter_userId INT,
     reviewId INT,
@@ -97,7 +97,7 @@ CREATE TABLE Host_Comment_Renter (
     FOREIGN KEY (reviewId) REFERENCES Review (reviewId)
 );
 
-CREATE TABLE Renter_Comment_Host (
+CREATE TABLE Renter_Review_Host (
     renter_userId INT,
     host_userId INT,
     reviewId INT,
@@ -108,14 +108,14 @@ CREATE TABLE Renter_Comment_Host (
     FOREIGN KEY (reviewId) REFERENCES Review (reviewId)
 );
 
-CREATE TABLE Renter_Comment_Experience (
+CREATE TABLE Renter_Review_Listing (
     renter_userId INT,
-    bookingId INT,
+    listingId INT,
     reviewId INT,
     Timestamp TIMESTAMP,
     PRIMARY KEY (renter_userId, bookingId),
     FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId),
-    FOREIGN KEY (bookingId) REFERENCES Booking (bookingId),
+    FOREIGN KEY (listingId) REFERENCES Booking (listingId),
     FOREIGN KEY (reviewId) REFERENCES Review (reviewId)
 );
 
