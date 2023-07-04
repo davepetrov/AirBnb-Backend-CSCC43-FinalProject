@@ -17,7 +17,7 @@ CREATE TABLE Listing (
     listingId INT NOT NULL AUTO INCREMENT,
     host_userId INT,
     listingType ENUM ('House', 'Apartment', 'Guesthouse', 'Hotel'),
-    isActive BOOLEAN,
+    cancelledBy ENUM ('Host', 'Renter'),
     locationLat FLOAT,
     locationLong FLOAT,
     postalCode VARCHAR(10),
@@ -37,6 +37,7 @@ CREATE TABLE Booking (
     bookingId INT NOT NULL AUTO INCREMENT,
     listingId INT,
     renter_userId INT,
+    isActive boolean,
     PRIMARY KEY (bookingId),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId),
     FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
@@ -47,7 +48,7 @@ CREATE TABLE Calendar (
     availabilityDate DATE,
     price DECIMAL(10, 2),
     isAvailable BOOLEAN,
-    PRIMARY KEY (listingId, date),
+    PRIMARY KEY (listingId, availabilityDate),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
 );
 
@@ -55,8 +56,8 @@ CREATE TABLE Review (
     reviewId INT  NOT NULL AUTO INCREMENT,
     comment TEXT,
     rating INT,
-    PRIMARY KEY (reviewId)
-    CONSTRAINT CheckRating CHECK (rating BETWEEN 1 and 5))
+    PRIMARY KEY (reviewId),
+    CONSTRAINT CheckRating CHECK (rating BETWEEN 1 and 5)
 );
 
 

@@ -26,6 +26,12 @@ public class ReviewService {
 
         try {
             int reviewId = createReview(rating, comment);
+
+            if (reviewId == -1) {
+                System.out.println("[Renter Review Listing Failed] Could not create review.");
+                return false;
+            }
+
             String sql = "INSERT INTO Renter_Review_Listing (renter_userId, listingId, reviewId) VALUES (?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
@@ -47,6 +53,12 @@ public class ReviewService {
         
         try {
             int reviewId = createReview(rating, comment);
+
+            if (reviewId == -1) {
+                System.out.println("[Renter Review Listing Failed] Could not create review.");
+                return false;
+            }
+
             String sql = "INSERT INTO Host_Review_Renter (hostUserId, renterUserId, reviewId) VALUES (?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, hostUserId);
@@ -68,6 +80,12 @@ public class ReviewService {
         
         try {
             int reviewId = createReview(rating, comment);
+
+            if (reviewId == -1) {
+                System.out.println("[Renter Review Listing Failed] Could not create review.");
+                return false;
+            }
+            
             String sql = "INSERT INTO Renter_Review_Host (renter_userId, hostUserId, reviewId) VALUES (?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, renterUserId);
