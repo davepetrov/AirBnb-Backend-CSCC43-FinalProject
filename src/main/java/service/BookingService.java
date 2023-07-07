@@ -5,8 +5,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import model.constant.UserType;
 
@@ -32,13 +36,25 @@ public class BookingService {
     }
 
     public boolean createBooking(int listingId, int renterId, int hostId, Date startDate, Date endDate) {
-        // check if dates are available (not booked)        
-        if (calendarService.isListingAvailable(listingId, startDate) && calendarService.isListingAvailable(listingId, endDate)) {
-            calendarService.updateListingAvailability(listingId, startDate, endDate, false);
-        } else {
-            System.out.println("[Booking Failed] Listing is not available for the dates selected.");
-            return false;
+        // check if dates are available (not booked)      
+        // using calendarService.isListingAvailable(listingId, date), check every date between start and end date
+        
+
+        LocalDate start = startDate.toLocalDate();
+        LocalDate end = endDate.toLocalDate();
+
+        List<LocalDate> dates = Stream.iterate(start, date -> date.plusDays(1))
+                .limit(ChronoUnit.DAYS.between(start, end) + 1)
+                .collect(Collectors.toList());
+
+        for (LocalDate date: dates){
+            if (!calendarService.isListingAvailable(listingId, Date.valueOf(date))){
+                System.out.println("[Booking Failed] Listing is not available for one of the dates selected: " + date.toString());
+                return false;
+            }
         }
+        
+        calendarService.updateListingAvailability(listingId, startDate, endDate, false);
         
         try{
             String sql = "INSERT INTO Booking (listingId, renter_userId, cancelledBy) VALUES (?, ?, ?)";

@@ -22,7 +22,7 @@ public class ListingService {
     
     
     public void createListing(int hostUserId, ListingType type, float locationLat, float locationLong, String postalCode, String city, String country){
-        // Implement here
+        
     }
 
     public void updateListingActiveStatus(int listingId, boolean isActive){
