@@ -52,7 +52,7 @@ public class ListingService {
             ps.setString(9, country);
             ps.executeUpdate();
             
-            bookingService.cancelBooking(hostUserId, null)
+            bookingService.cancelBooking(hostUserId, null);
 
         } catch (SQLException e) {
             System.out.println("[Listing Creation Failed] " + e.getMessage());

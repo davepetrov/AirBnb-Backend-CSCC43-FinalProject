@@ -51,7 +51,7 @@ public class BookingService {
 
         for (LocalDate date: dates){
             if (!calendarService.isListingAvailable(listingId, Date.valueOf(date))){
-                System.out.println("[Booking Failed] Listing is not available for one of the dates selected ("+  date.toString() +") between the startDate ("+  startDate.toString() +") and endDate ("+  endDate.toString();
+                System.out.println("[Booking Failed] Listing is not available for one of the dates selected ("+  date.toString() +") between the startDate ("+  startDate.toString() +") and endDate ("+  endDate.toString());
                 return false;
             }
         }
