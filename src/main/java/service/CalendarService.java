@@ -3,6 +3,7 @@ package service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.sql.Date;
@@ -127,7 +128,29 @@ public class CalendarService {
             System.out.println("[Get Booking Dates Failed] " + e.getMessage());
         }
         return null;
-    }
-
+    }    
     
+    public int[] getAllBookingIdsAfter(int listingId, Date date){
+        // get all bookingIds for a listingId from Calendar
+        try {
+            String sql = "SELECT bookingId FROM Calendar WHERE listingId = ? AND availabilityDate > ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, listingId);
+            stmt.setDate(2, date);
+            ResultSet rq = stmt.executeQuery();
+            int[] bookingIds = new int[rq.getFetchSize()];
+            int i = 0;
+            while (rq.next()){
+                bookingIds[i] = rq.getInt("bookingId");
+                i++;
+            }
+            return bookingIds;
+
+            
+        } catch (Exception e) {
+            System.out.println("[Get All Booking Ids Failed] " + e.getMessage());
+        }
+        return null;
+    };
+
 }

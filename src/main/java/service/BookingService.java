@@ -7,12 +7,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import model.constant.UserType;
+import model.entity.Booking;
 
 import java.sql.Date;
 
@@ -49,7 +51,7 @@ public class BookingService {
 
         for (LocalDate date: dates){
             if (!calendarService.isListingAvailable(listingId, Date.valueOf(date))){
-                System.out.println("[Booking Failed] Listing is not available for one of the dates selected: " + date.toString());
+                System.out.println("[Booking Failed] Listing is not available for one of the dates selected ("+  date.toString() +") between the startDate ("+  startDate.toString() +") and endDate ("+  endDate.toString();
                 return false;
             }
         }
@@ -138,6 +140,28 @@ public class BookingService {
             System.out.println("[Get Listing ID Failed] " + e.getMessage());
             return -1;
         }
-    
+    }
+
+    public List<Booking> getBookingsByListingId(int listingId) {
+        try {
+            String sql = "SELECT bookingId, listingId, renter_userId, cancelledBy FROM Booking WHERE listingId = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, listingId);
+            ResultSet rs = stmt.executeQuery(sql);
+            List<Booking> bookings = new ArrayList<Booking>();
+
+            while (rs.next()){
+                bookings.add(new Booking(
+                    rs.getInt("bookingId"), 
+                    rs.getInt("listingId"), 
+                    rs.getInt("renter_userId"), 
+                    UserType.valueOf(rs.getString("cancelledBy"))));
+            }
+            
+            return bookings;
+        } catch (Exception e) {
+            System.out.println("[Get Bookings By Listing ID Failed] " + e.getMessage());
+            return null;
+        }
     }
 }

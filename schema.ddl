@@ -17,7 +17,8 @@ CREATE TABLE Listing (
     listingId INT NOT NULL AUTO INCREMENT,
     host_userId INT,
     listingType ENUM ('House', 'Apartment', 'Guesthouse', 'Hotel'),
-    cancelledBy ENUM ('Host', 'Renter'),
+    isActive BOOLEAN,
+    isDeleted BOOLEAN,
     locationLat FLOAT,
     locationLong FLOAT,
     postalCode VARCHAR(10),
@@ -37,7 +38,7 @@ CREATE TABLE Booking (
     bookingId INT NOT NULL AUTO INCREMENT,
     listingId INT,
     renter_userId INT,
-    isActive boolean,
+    cancelledBy ENUM ('Host', 'Renter'),
     PRIMARY KEY (bookingId),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId),
     FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
@@ -69,22 +70,6 @@ CREATE TABLE Listing_Offers_Amenities (
     PRIMARY KEY (listingId, amenityId),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId),
     FOREIGN KEY (amenityId) REFERENCES Amenities (amenityId)
-);
-
-CREATE TABLE Host_Cancels_Booking (
-    bookingId INT,
-    Timestamp TIMESTAMP,
-    Reason TEXT,
-    PRIMARY KEY (bookingId),
-    FOREIGN KEY (bookingId) REFERENCES Booking (bookingId)
-);
-
-CREATE TABLE Renter_Cancels_Booking (
-    bookingId INT,
-    Timestamp TIMESTAMP,
-    Reason TEXT,
-    PRIMARY KEY (bookingId),
-    FOREIGN KEY (bookingId) REFERENCES Booking (bookingId)
 );
 
 CREATE TABLE Host_Review_Renter (
