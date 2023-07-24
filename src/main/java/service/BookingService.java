@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,11 +36,12 @@ public class BookingService {
         System.out.println("Successfully connected to MySQL!");
     }
 
-    public boolean createBooking(int listingId, int renterId, int hostId, Date startDate, Date endDate) {
-        // check if dates are available (not booked)      
-        // using calendarService.isListingAvailable(listingId, date), check every date between start and end date
-        
+    public static void main(String[] args){
+        System.out.println("HI");
+    }
 
+    public boolean createBooking(int listingId, int renterId, int hostId, Date startDate, Date endDate) {
+    
         LocalDate start = startDate.toLocalDate();
         LocalDate end = endDate.toLocalDate();
 
@@ -49,21 +49,23 @@ public class BookingService {
                 .limit(ChronoUnit.DAYS.between(start, end) + 1)
                 .collect(Collectors.toList());
 
+        // Using calendarService.isListingAvailable(listingId, date), check every date between start and end date
+
         for (LocalDate date: dates){
             if (!calendarService.isListingAvailable(listingId, Date.valueOf(date))){
                 System.out.println("[Booking Failed] Listing is not available for one of the dates selected ("+  date.toString() +") between the startDate ("+  startDate.toString() +") and endDate ("+  endDate.toString());
                 return false;
             }
         }
-        
-        calendarService.updateListingAvailability(listingId, startDate, endDate, false);
-        
+                
         try{
-            String sql = "INSERT INTO Booking (listingId, renter_userId, cancelledBy) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO Booking (listingId, renter_userId, cancelledBy, startDate, endDate) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, listingId);
             stmt.setInt(2, renterId);
             stmt.setString(3, null);
+            stmt.setDate(4, startDate);
+            stmt.setDate(5, endDate);
             stmt.executeUpdate(sql);
             
         } catch (SQLException e) {
@@ -92,7 +94,7 @@ public class BookingService {
         return false;
     }
 
-    public boolean cancelBooking(int bookingId, UserType cancelledBy) {
+    private boolean cancelBooking(int bookingId, UserType cancelledBy) {
         
         // Find the booking with bookingId and set cancelledBy (meaning cancelled)
         try {
@@ -103,24 +105,7 @@ public class BookingService {
             stmt.executeUpdate(sql);
             System.out.println("Successfully cancelled a booking!");
         } catch (Exception e) {
-            System.out.println("[Cancel Booking Failed 1] " + e.getMessage());
-            return false;
-        }
-
-        // Use CalendarService.updateListingAvailability() to update listing availability
-        // if the host cancels the booking the day of the booking, set the availability of the current day to false
-        try {
-            int listingId = getListingId(bookingId);
-
-            List<Date> bookedDates = calendarService.getBookedDates(listingId);
-            Date currentDate = calendarService.getCurrentDate();
-            // if the booking is cancelled the day of the booking, set the availability of the current day to false
-            if (bookedDates.contains(currentDate)) {
-                calendarService.updateListingAvailability(listingId, currentDate, false);
-            }
-            
-        } catch (Exception e) {
-            System.out.println("[Cancel Booking Failed 2] " + e.getMessage());
+            System.out.println("[Cancel Booking Failed] " + e.getMessage());
             return false;
         }
         return true;

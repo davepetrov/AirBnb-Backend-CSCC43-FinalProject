@@ -23,7 +23,7 @@ public class CalendarService {
         System.out.println("Successfully connected to MySQL!");
     }
 
-        public void updateListingAvailability(int listingId, Date availabilityDate, boolean isAvailable) {
+    public void updateListingAvailability(int listingId, Date availabilityDate, boolean isAvailable) {
         try {
             String sql = "UPDATE Calendar SET isAvailable = ? WHERE listingId = ? AND availabilityDate = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -37,36 +37,15 @@ public class CalendarService {
         }
     }
     
-    public void updateListingAvailability(int listingId, Date startDate, Date endDate, boolean isAvailable) {
-        try {
-            String sql = "UPDATE Calendar SET isAvailable = ? WHERE listingId = ? AND availabilityDate >= ? AND availabilityDate <= ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setBoolean(1, isAvailable);
-            stmt.setInt(2, listingId);
-            stmt.setDate(3, startDate);
-            stmt.setDate(3, endDate);
-            stmt.executeUpdate(sql);
-
-        } catch (Exception e) {
-            System.out.println("[Update Listing Availability Failed] " + e.getMessage());
-        }
-    }
-
     public boolean updateListingPrice(int listingId, Date date, float price) {
-        // check to see if date is booked. If it is, cannot update price, return false
-        if (!isListingAvailable(listingId, date)){
-            System.out.println("[Update Listing Price Failed] Listing is not available for the date selected.");
-            return false;
-        }
-        // update the listing price for this date
+        // Update the listing price for this date ONLY if the listing is available (ie: not booked out)
         try {
-            String sql = "UPDATE Calendar SET price = ? WHERE listingId = ? AND availabilityDate = ?";
+            String sql = "UPDATE Calendar SET price = ? WHERE listingId = ? AND availabilityDate = ? AND isAvailable = true";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setFloat(1, price);
             stmt.setInt(2, listingId);
             stmt.setDate(3, date);
             stmt.executeUpdate(sql);
-            System.out.println("Successfully updated listing price!");
             return true;
         } catch (Exception e) {
             System.out.println("[Update Listing Price Failed] " + e.getMessage());

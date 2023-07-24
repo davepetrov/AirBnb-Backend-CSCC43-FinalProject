@@ -9,7 +9,6 @@ public class Listing {
     private int hostUid; // FK
     private ListingType listingType;
     private boolean isActive;
-    private boolean isDeleted;
     private double locationLat;
     private double locationLong;
     private String postalCode;

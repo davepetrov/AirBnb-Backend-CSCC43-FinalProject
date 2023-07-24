@@ -38,21 +38,18 @@ public class ListingService {
     
     
     public void createListing(int hostUserId, ListingType type, float locationLat, float locationLong, String postalCode, String city, String country){
-        String sql = "INSERT INTO Listing (host_userId, listingType, isActive, isDeleted, locationLat, locationLong, postalCode, city, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO Listing (host_userId, listingType, isActive, locationLat, locationLong, postalCode, city, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         try{
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, hostUserId);
             ps.setString(2, type.toString());
             ps.setBoolean(3, true);
-            ps.setBoolean(4, false);
             ps.setFloat(5, locationLat);
             ps.setFloat(6, locationLong);
             ps.setString(7, postalCode);
             ps.setString(8, city);
             ps.setString(9, country);
             ps.executeUpdate();
-            
-            bookingService.cancelBooking(hostUserId, null);
 
         } catch (SQLException e) {
             System.out.println("[Listing Creation Failed] " + e.getMessage());
@@ -77,19 +74,10 @@ public class ListingService {
 
     public void deleteListing(int listingId){
         try {
-            String sql = "UPDATE Listing SET isActive = ?, isDeleted = ? WHERE listingId = ?";
+            String sql = "DELETE Listing WHERE listingId = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setBoolean(1, false);
-            ps.setBoolean(2, true);
             ps.setInt(3, listingId);
             ps.executeUpdate();
-
-            // Cancel all future bookings associated with listingId
-            int[] bookingIds = calendarService.getAllBookingIdsAfter(listingId, Date.valueOf(LocalDate.now()));
-            for (int bookingId : bookingIds) {
-                bookingService.cancelBooking(bookingId, UserType.Host);
-            }
-
 
         } catch (SQLException e) {
             System.out.println("[Listing Update Status Failed] " + e.getMessage());
@@ -99,7 +87,7 @@ public class ListingService {
 
     public List<Listing> getAllActiveListings(){
         try {
-            String sql = "SELECT bookingId FROM Booking where isActive = true and isDeleted = false";
+            String sql = "SELECT bookingId FROM Booking where isActive = true";
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery(sql);
             List<Listing> listings = new ArrayList<Listing>();
@@ -109,7 +97,6 @@ public class ListingService {
                 listing.setHostUid(rs.getInt("host_userId"));
                 listing.setListingType(ListingType.valueOf(rs.getString("listingType")));
                 listing.setActive(rs.getBoolean("isActive"));
-                listing.setDeleted(rs.getBoolean("isDeleted"));
                 listing.setLocationLat(rs.getFloat("locationLat"));
                 listing.setLocationLong(rs.getFloat("locationLong"));
                 listing.setPostalCode(rs.getString("postalCode"));

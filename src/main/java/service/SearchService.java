@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Dto.ListingSearch;
-import model.entity.Booking;
-import model.entity.Listing;
-
 
 public class SearchService {
 
@@ -21,17 +18,13 @@ public class SearchService {
     private final String USER = System.getenv("USER");
     private final String PASSWORD = System.getenv("PASSWORD");
     private Connection conn;
-    private BookingService bookingService;
-    private ListingService listingService;
-    private UserService userService;
+    private Utils utils;
 
-    private final int EARTH_RADIUS_KM = 6371;
     private final int DEFAULT_DIAMETER_KM = 10;
         
     public SearchService() throws ClassNotFoundException, SQLException {
-        bookingService = new BookingService();
-        listingService = new ListingService();
-        userService = new UserService();
+        utils = new Utils();
+
 
         //Register JDBC driver
 		Class.forName(System.getenv("CLASSNAME"));
@@ -39,16 +32,18 @@ public class SearchService {
         System.out.println("Successfully connected to MySQL!");
     }
         
-
-
     public List<ListingSearch> findListingsByLatitudeLongitudeWithDistanceSortByPrice(Date startDate, Date endDate, double latitude, double longitude, int radiusKm, boolean isAscending){
+
+        if (radiusKm <= 0) {
+            radiusKm = DEFAULT_DIAMETER_KM;
+        }
 
         String sql = "SELECT l.listingId, l.host_userId, l.locationLat, l.locationLong, l.postalCode, l.city, l.country, l.price, " +
             " (6371 * acos(cos(radians( ? )) * cos(radians(l.locationLat)) * cos(radians(l.locationLong) - radians( ? )) + sin(radians( ? )) * sin(radians(l.locationLat)))) AS distance" +
             " FROM Listing AS l" +
             " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
             " WHERE c.availabilityDate BETWEEN ? AND ? "+
-            "   AND c.isAvailable = true AND l.isActive = true AND l.isDeleted = false" +
+            "   AND c.isAvailable = true AND l.isActive = true" +
             " HAVING distance <= ? "+
             " ORDER BY price "+(isAscending ? "ASC" : "DESC");
 
@@ -64,7 +59,7 @@ public class SearchService {
             " FROM Listing AS l" +
             " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
             " WHERE c.availabilityDate BETWEEN ? AND ?"+
-            "   AND c.isAvailable = true AND l.isActive = true AND l.isDeleted = false" +
+            "   AND c.isAvailable = true AND l.isActive = true" +
             " HAVING distance <= ? " +
             " ORDER BY distance ASC";
 
@@ -94,7 +89,7 @@ public class SearchService {
                 String postalCode = rs.getString("postalCode");
                 String listingCity = rs.getString("city");
                 String listingCountry = rs.getString("country");
-                int listingPrice = rs.getInt("price");
+                double listingPrice = rs.getDouble("price");
                 double distance = rs.getDouble("distance");
 
                 ListingSearch listingResult = new ListingSearch(listingId, hostUserId, listingLatitude, listingLongitude, postalCode, listingCity, listingCountry, listingPrice, distance);
@@ -111,39 +106,14 @@ public class SearchService {
 
     }
 
-    
-    // public List<ListingSearch> findListingsByPostalCodeSortByPrice(Date startDate, Date endDate, double latitude, double longitude, int radiusKm, boolean isAscending){
 
-    //     String sql = "SELECT l.listingId, l.host_userId, l.locationLat, l.locationLong, l.postalCode, l.city, l.country, l.price, " +
-    //         " (6371 * acos(cos(radians( ? )) * cos(radians(l.locationLat)) * cos(radians(l.locationLong) - radians( ? )) + sin(radians( ? )) * sin(radians(l.locationLat)))) AS distance" +
-    //         " FROM Listing AS l" +
-    //         " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
-    //         " WHERE c.availabilityDate BETWEEN ? AND ? "+
-    //         "   AND c.isAvailable = true AND l.isActive = true AND l.isDeleted = false" +
-    //         " HAVING distance <= ? "+
-    //         " ORDER BY price "+(isAscending ? "ASC" : "DESC");
-
-    //     System.out.println("[DEBUG SEARCH] Ordering by price in order of "+(isAscending ? "ASC" : "DESC"));
-    //     return findListingsByLatitudeLongitudeWithDistance(sql,  startDate, endDate, latitude, longitude, radiusKm);
-    // }
-
-    // }
-    // private List<ListingSearch> findListingsByPostalCode(Date startDate, Date endDate, String postalCode){
-
-    // }
-    
-    // The system should also support exact search queries, by address. The search
-    // will accept an address in the input and return the listing in that address if one
-    // exists.
-
-
-    public List<ListingSearch> findListingSearchByExactAddress(Date startDate, Date endDate, String postalCode, String city, String country, boolean isAscending){
+    public List<ListingSearch> findListingSearchByExactAddressSortByPrice(Date startDate, Date endDate, String postalCode, String city, String country, boolean isAscending){
 
         String sql = "SELECT l.listingId, l.host_userId, l.locationLat, l.locationLong, l.postalCode, l.city, l.country, l.price" +
             " FROM Listing AS l" +
             " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
             " WHERE c.availabilityDate BETWEEN ? AND ?"+
-            "   AND c.isAvailable = true AND l.isActive = true AND l.isDeleted = false AND l.postalCode = ? AND l.city = ? AND l.country = ?" + 
+            "   AND c.isAvailable = true AND l.isActive = true AND l.postalCode = ? AND l.city = ? AND l.country = ?" + 
             " ORDER BY price "+(isAscending ? "ASC" : "DESC");
         
         List<ListingSearch> results = new ArrayList<ListingSearch>();
@@ -166,7 +136,7 @@ public class SearchService {
                 listingResult.setPostalCode(rs.getString("postalCode"));
                 listingResult.setCity(rs.getString("city"));
                 listingResult.setCountry(rs.getString("country"));
-                listingResult.setPrice(rs.getInt("price"));
+                listingResult.setPrice(rs.getDouble("price"));
                 results.add(listingResult);
             }
 
@@ -178,14 +148,98 @@ public class SearchService {
         }
     }
 
+    public List<ListingSearch> searchListingsByFiltersSortByPrice(String postalCode, List<String> amenities, Date startDate, Date endDate, Double minPrice, Double maxPrice, boolean isAscending) {
+        String sql = "SELECT l.listingId, l.host_userId, l.locationLat, l.locationLong, l.postalCode, l.city, l.country, l.price" +
+                " FROM Listing AS l" +
+                " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
+                " INNER JOIN ListingAmenities AS la ON l.listingId = la.listingId" +
+                " WHERE c.isAvailable = true AND l.isActive = true";
 
-    // TODO: Another mode of search should refine the above searches with a temporal
-    // filter, meaning that we should also provide a date range that we are
-    // interested in and the system should return listings which are available for
-    // booking in the date range specified.
+        List<Object> params = new ArrayList<>();
 
-    // TODO: The system should support filters for the search fully. For example searching
-    // by postal code for listings with a set of amenities and time window of
-    // availability and a price range should be fully supported.
-    //         """;
+        if (postalCode != null) {
+            sql += " AND l.postalCode = ?";
+            params.add(postalCode);
+        }
+
+        if (amenities != null && !amenities.isEmpty()) {
+            for (String a: amenities) {
+                if (!utils.isValidAmenity(a)) {
+                    System.out.println("[Search searchListingsByFilters Failed] Invalid amenity: " + a);
+                    return null;
+                }
+            }
+            sql += " AND la.amenityName IN (" + getAmenityPlaceholders(amenities.size()) + ")";
+            params.addAll(amenities);
+        }
+
+        if (startDate != null && endDate != null) {
+            sql += " AND c.availabilityDate BETWEEN ? AND ?";
+            params.add(startDate);
+            params.add(endDate);
+        }
+
+        if (minPrice != null) {
+            sql += " AND l.price >= ?";
+            params.add(minPrice);
+        }
+
+        if (maxPrice != null) {
+            sql += " AND l.price <= ?";
+            params.add(maxPrice);
+        }
+
+        sql += " ORDER BY l.price " + (isAscending ? "ASC" : "DESC");
+
+        List<ListingSearch> results = new ArrayList<>();
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            setStatementParameters(ps, params);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ListingSearch listingResult = new ListingSearch();
+                listingResult.setListingId(rs.getInt("listingId"));
+                listingResult.setHostUserId(rs.getInt("host_userId"));
+                listingResult.setLocationLat(rs.getDouble("locationLat"));
+                listingResult.setLocationLong(rs.getDouble("locationLong"));
+                listingResult.setPostalCode(rs.getString("postalCode"));
+                listingResult.setCity(rs.getString("city"));
+                listingResult.setCountry(rs.getString("country"));
+                listingResult.setPrice(rs.getDouble("price"));
+                results.add(listingResult);
+            }
+
+            return results;
+
+        } catch (SQLException ex) {
+            System.out.println("[Search searchListingsByFilters Failed] " + ex.getMessage());
+            return null;
+        }
+    }
+
+    private String getAmenityPlaceholders(int count) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            sb.append("?");
+            if (i < count - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
+    }
+
+    private void setStatementParameters(PreparedStatement ps, List<Object> params) throws SQLException {
+        for (int i = 0; i < params.size(); i++) {
+            Object param = params.get(i);
+            if (param instanceof Date) {
+                ps.setDate(i + 1, (Date) param);
+            } else if (param instanceof String) {
+                ps.setString(i + 1, (String) param);
+            } else if (param instanceof Double) {
+                ps.setDouble(i + 1, (Double) param);
+            }
+        }
+    }
 }
