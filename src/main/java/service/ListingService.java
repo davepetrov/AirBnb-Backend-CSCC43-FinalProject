@@ -22,13 +22,7 @@ public class ListingService {
     private final String PASSWORD = System.getenv("PASSWORD");
     private Connection conn;
 
-    private CalendarService calendarService;
-
-    private BookingService bookingService;
-
     public ListingService() throws ClassNotFoundException, SQLException {
-        CalendarService calendarService = new CalendarService();
-        BookingService bookingService = new BookingService();
 
         //Register JDBC driver
 		Class.forName(System.getenv("CLASSNAME"));
