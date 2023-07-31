@@ -1,6 +1,6 @@
 -------------------------ENTITIES-------------------------
 CREATE TABLE BNBUser (
-    userId INT NOT NULL AUTO INCREMENT,
+    userId INT NOT NULL AUTO_INCREMENT,
     firstName VARCHAR(255),
     surName VARCHAR(255),
     dob DATE,
@@ -15,10 +15,10 @@ CREATE TABLE BNBUser (
 );
 
 CREATE TABLE Listing (
-    listingId INT NOT NULL AUTO INCREMENT,
+    listingId INT NOT NULL AUTO_INCREMENT,
     host_userId INT,
     listingType ENUM ('House', 'Apartment', 'Guesthouse', 'Hotel'),
-    isActive NUMBER(1),
+    isActive BOOLEAN,
     locationLat FLOAT,
     locationLong FLOAT,
     postalCode VARCHAR(10),
@@ -26,14 +26,12 @@ CREATE TABLE Listing (
     country VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                                   ON UPDATE CURRENT_TIMESTAMP -- trigger
+        ON UPDATE CURRENT_TIMESTAMP, -- trigger
 
     PRIMARY KEY (listingId),
     FOREIGN KEY (host_userId) REFERENCES BNBUser (userId)
-        ON DELETE CASCADE
+        ON DELETE SET NULL
         ON UPDATE CASCADE
-
-    CONSTRAINT isAvailable CHECK (is_checked IN (1,0))
 );
 
 CREATE TABLE Amenities (
@@ -44,22 +42,22 @@ CREATE TABLE Amenities (
 );
 
 CREATE TABLE Booking (
-    bookingId INT NOT NULL AUTO INCREMENT,
+    bookingId INT NOT NULL AUTO_INCREMENT,
     listingId INT,
     renter_userId INT,
     cancelledBy ENUM ('Host', 'Renter'),
     startDate Date NOT NULL,
     endDate Date NOT NULL,
-    created_at TIMEtSTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                                   ON UPDATE CURRENT_TIMESTAMP -- trigger
+                                   ON UPDATE CURRENT_TIMESTAMP, -- trigger
 
     PRIMARY KEY (bookingId),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
-        ON DELETE CASCADE
+        ON DELETE SET NULL
         ON UPDATE CASCADE,
     FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
-        ON DELETE DELETE
+        ON DELETE SET NULL
         ON UPDATE CASCADE
 );
 
@@ -67,13 +65,12 @@ CREATE TABLE Calendar (
     listingId INT,
     availabilityDate DATE,
     price DECIMAL(10, 2),
-    isAvailable NUMBER(1),
+    isAvailable BOOLEAN,
 
     PRIMARY KEY (listingId, availabilityDate),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
         ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    CONSTRAINT isAvailable CHECK (is_checked IN (1,0))
+        ON UPDATE CASCADE
 );
 
 -------------------------RELATIONS-------------------------
@@ -97,7 +94,7 @@ CREATE TABLE Host_Review_Renter (
     rating INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                                   ON UPDATE CURRENT_TIMESTAMP -- trigger
+                                ON UPDATE CURRENT_TIMESTAMP, -- trigger
 
     PRIMARY KEY (hostUserId, renterUserId),
     FOREIGN KEY (hostUserId) REFERENCES BNBUser (userId)
@@ -107,7 +104,7 @@ CREATE TABLE Host_Review_Renter (
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    CONSTRAINT CheckRating CHECK (rating BETWEEN 1 and 5),
+    CONSTRAINT CheckRating1 CHECK (rating BETWEEN 1 and 5)
 );
 
 CREATE TABLE Renter_Review_Host (
@@ -117,7 +114,7 @@ CREATE TABLE Renter_Review_Host (
     rating INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                                   ON UPDATE CURRENT_TIMESTAMP -- trigger
+                                   ON UPDATE CURRENT_TIMESTAMP, -- trigger
     PRIMARY KEY (renterUserId, hostUserId),
     FOREIGN KEY (renterUserId) REFERENCES BNBUser (userId)
         ON DELETE CASCADE
@@ -125,9 +122,7 @@ CREATE TABLE Renter_Review_Host (
     FOREIGN KEY (hostUserId) REFERENCES BNBUser (userId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-
-        ON UPDATE CASCADE,
-    CONSTRAINT CheckRating CHECK (rating BETWEEN 1 and 5)
+    CONSTRAINT CheckRating2 CHECK (rating BETWEEN 1 and 5)
 );
 
 CREATE TABLE Renter_Review_Listing (
@@ -137,17 +132,17 @@ CREATE TABLE Renter_Review_Listing (
     rating INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                                   ON UPDATE CURRENT_TIMESTAMP -- trigger
+                                   ON UPDATE CURRENT_TIMESTAMP, -- trigger
 
-    PRIMARY KEY (renterUserId, bookingId),
+    PRIMARY KEY (renterUserId, listingId),
     FOREIGN KEY (renterUserId) REFERENCES BNBUser (userId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (listingId) REFERENCES Booking (listingId)
+    FOREIGN KEY (listingId) REFERENCES Listing (listingId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    CONSTRAINT CheckRating CHECK (rating BETWEEN 1 and 5)
+    CONSTRAINT CheckRating3 CHECK (rating BETWEEN 1 and 5)
 );
 
 -------------------------TRIGGERS-------------------------
@@ -162,7 +157,7 @@ CREATE TRIGGER ToBookAvailabilityTrigger
         WHERE listingId = NEW.listingId AND availabilityDate BETWEEN NEW.startDate AND NEW.endDate;
     END
 
-// Trigger for when a booking is deleted, update the calendar availability
+-- Trigger for when a booking is deleted, update the calendar availability
 CREATE TRIGGER ToDeleteAvailabilityTrigger
     AFTER DELETE ON Booking
     FOR EACH ROW
@@ -172,7 +167,7 @@ CREATE TRIGGER ToDeleteAvailabilityTrigger
         WHERE listingId = OLD.listingId AND availabilityDate BETWEEN OLD.startDate AND OLD.endDate;
     END
 
-// Trigger for when a listing is deleted, Cancel all future bookings (By Host)
+-- Trigger for when a listing is deleted, Cancel all future bookings (By Host)
 CREATE TRIGGER ToCancelBookingOnListingDeletion
     AFTER DELETE ON Listing
     FOR EACH ROW
@@ -183,7 +178,7 @@ CREATE TRIGGER ToCancelBookingOnListingDeletion
     END
 
 
-// Trigger for when a host cancels the day of a booking, the availability of the listing is set to false for that current day
+-- Trigger for when a host cancels the day of a booking, the availability of the listing is set to false for that current day
 CREATE TRIGGER ToCancelBookingOnDayOf
     AFTER UPDATE ON Booking
     FOR EACH ROW
@@ -195,7 +190,7 @@ CREATE TRIGGER ToCancelBookingOnDayOf
         END IF;
     END
 
-// Trigger for when a booking is cancelled, the availability of the listing is set to true for the days of the cancelled booking
+-- Trigger for when a booking is cancelled, the availability of the listing is set to true for the days of the cancelled booking
 CREATE TRIGGER ToCancelBookingsAfter
     AFTER UPDATE ON Booking
     FOR EACH ROW
