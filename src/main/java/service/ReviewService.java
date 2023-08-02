@@ -6,15 +6,20 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class ReviewService {
+
     //Database credentials
-    private final String CONNECTION = System.getenv("CONNECTION");
-    private final String USER = System.getenv("USER");
-    private final String PASSWORD = System.getenv("PASSWORD");
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/69project";
+    private final String USER = "root";
+    private final String PASSWORD = "dp05092001";
+    private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
+
     private Connection conn;
 
     public ReviewService() throws ClassNotFoundException, SQLException {
-        //Register JDBC driver
-		Class.forName(System.getenv("CLASSNAME"));
+
+        // Class.forName(System.getenv("CLASSNAME"));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
         System.out.println("Successfully connected to MySQL!");
     }
@@ -29,7 +34,7 @@ public class ReviewService {
             stmt.setInt(2, listingId);
             stmt.setString(3, comment);
             stmt.setInt(4, rating);
-            stmt.executeUpdate(sql);
+            stmt.executeUpdate();
 
         } catch (Exception e) {
             System.out.println("[Renter Review Listing Failed] " + e.getMessage());
@@ -50,7 +55,7 @@ public class ReviewService {
             stmt.setInt(2, renterUserId);
             stmt.setString(3, comment);
             stmt.setInt(4, rating);
-            stmt.executeUpdate(sql);
+            stmt.executeUpdate();
 
         } catch (Exception e) {
             System.out.println("[Renter Review Listing Failed] " + e.getMessage());
@@ -71,7 +76,7 @@ public class ReviewService {
             stmt.setInt(2, hostUserId);
             stmt.setString(3, comment);
             stmt.setInt(4, rating);
-            stmt.executeUpdate(sql);
+            stmt.executeUpdate();
 
         } catch (Exception e) {
             System.out.println("[Renter Review Listing Failed] " + e.getMessage());

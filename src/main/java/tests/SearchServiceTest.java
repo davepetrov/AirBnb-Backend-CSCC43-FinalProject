@@ -1,8 +1,13 @@
+package tests;
 import java.sql.SQLException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+
+import model.Dto.ListingSearch;
+import service.SearchService;
 
 public class SearchServiceTest {
 
@@ -18,7 +23,7 @@ public class SearchServiceTest {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("===== Search Service =====");
+            System.out.println("\n===== Search Service =====");
             System.out.println("1. Find Listings by Latitude and Longitude with Distance (Sort by Price)");
             System.out.println("2. Find Listings by Latitude and Longitude with Distance (Sort by Distance)");
             System.out.println("3. Find Listings by Exact Address (Sort by Price)");
@@ -130,9 +135,10 @@ public class SearchServiceTest {
 
         System.out.println("Enter amenities separated by commas (e.g., wifi,pool):");
         String amenitiesInput = scanner.nextLine();
+        String[] amenitiesArray = amenitiesInput.split(",");
         List<String> amenities = new ArrayList<>();
         if (!amenitiesInput.isEmpty()) {
-            amenities = List.of(amenitiesInput.split(","));
+            amenities = new ArrayList<>(Arrays.asList(amenitiesArray));
         }
 
         System.out.println("Enter minimum price (or leave empty for any):");

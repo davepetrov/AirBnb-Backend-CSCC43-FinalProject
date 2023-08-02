@@ -10,7 +10,7 @@ public class User {
     private String dob;
     private String occupation;
     private String sin;
-    private String postalcode;
+    private String postalCode;
     private String city;
     private String country;
     private String creditcard;    

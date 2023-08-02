@@ -16,16 +16,20 @@ import model.entity.Booking;
 import model.entity.Listing;
 
 public class ListingService {
+
     //Database credentials
-    private final String CONNECTION = System.getenv("CONNECTION");
-    private final String USER = System.getenv("USER");
-    private final String PASSWORD = System.getenv("PASSWORD");
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/69project";
+    private final String USER = "root";
+    private final String PASSWORD = "dp05092001";
+    private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
+
     private Connection conn;
 
     public ListingService() throws ClassNotFoundException, SQLException {
 
-        //Register JDBC driver
-		Class.forName(System.getenv("CLASSNAME"));
+		// Class.forName(System.getenv("CLASSNAME"));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
         System.out.println("Successfully connected to MySQL!");
     }
@@ -38,57 +42,62 @@ public class ListingService {
             ps.setInt(1, hostUserId);
             ps.setString(2, type.toString());
             ps.setBoolean(3, true);
-            ps.setFloat(5, locationLat);
-            ps.setFloat(6, locationLong);
-            ps.setString(7, postalCode);
-            ps.setString(8, city);
-            ps.setString(9, country);
+            ps.setFloat(4, locationLat);
+            ps.setFloat(5, locationLong);
+            ps.setString(6, postalCode);
+            ps.setString(7, city);
+            ps.setString(8, country);
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            System.out.println("[Listing Creation Failed] " + e.getMessage());
+            if (e.getMessage().contains("a foreign key constraint fails")) {
+                System.out.println("[Listing Creation Failed] HostId doesnt exist\n");
+            } else {
+                // Handle other SQLExceptions
+                System.out.println("[Listing Creation Failed]An SQL exception occurred: " + e.getMessage() + "\n");
+            }            
         }
     }
 
     public void updateListingActiveStatus(int listingId, boolean isActive){
         try {
-            String sql = "UPDATE Listing SET isActive = ? WHERE listingId = ?";
+            String sql = "UPDATE Listing SET isActive = ? WHERE listingId = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setBoolean(1, isActive);
             ps.setInt(2, listingId);
             ps.executeUpdate();
+            System.out.println("Listing status updated successfully!");
 
         } catch (SQLException e) {
             System.out.println("[Listing Update Status Failed] " + e.getMessage());
         }
-
-
     }
 
 
     public void deleteListing(int listingId){
         try {
-            String sql = "DELETE Listing WHERE listingId = ?";
+            String sql = "DELETE FROM Listing WHERE listingId = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(3, listingId);
+            ps.setInt(1, listingId);
             ps.executeUpdate();
+            System.out.println("Listing deleted successfully!");
 
         } catch (SQLException e) {
-            System.out.println("[Listing Update Status Failed] " + e.getMessage());
-        }    
+            System.out.println("[Listing Delete Failed] " + e.getMessage());
+        }   
     }
 
 
     public List<Listing> getAllActiveListings(){
         try {
-            String sql = "SELECT bookingId FROM Booking where isActive = true";
+            String sql = "SELECT * FROM Listing where isActive = true";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery(sql);
+            ResultSet rs = stmt.executeQuery();
             List<Listing> listings = new ArrayList<Listing>();
             while (rs.next()){
                 Listing listing = new Listing();
                 listing.setListingId(rs.getInt("listingId"));
-                listing.setHostUid(rs.getInt("host_userId"));
+                listing.setHost_userId(rs.getInt("host_userId"));
                 listing.setListingType(ListingType.valueOf(rs.getString("listingType")));
                 listing.setActive(rs.getBoolean("isActive"));
                 listing.setLocationLat(rs.getFloat("locationLat"));
@@ -101,7 +110,7 @@ public class ListingService {
             return listings;
 
         } catch (Exception e) {
-            System.out.println("[Get All Bookings Failed] " + e.getMessage());
+            System.out.println("[Get All Active Listings Failed] " + e.getMessage());
             return null;
         }
     }

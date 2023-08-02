@@ -1,5 +1,8 @@
+package tests;
 import java.sql.SQLException;
 import java.util.Scanner;
+
+import service.ReviewService;
 
 public class ReviewServiceTest {
 
@@ -15,7 +18,7 @@ public class ReviewServiceTest {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("===== Review Service =====");
+            System.out.println("\n===== Review Service =====");
             System.out.println("1. Renter Review Listing");
             System.out.println("2. Host Review Renter");
             System.out.println("3. Renter Review Host");

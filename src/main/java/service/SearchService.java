@@ -14,10 +14,13 @@ import model.Dto.ListingSearch;
 public class SearchService {
 
     //Database credentials
-    private final String CONNECTION = System.getenv("CONNECTION");
-    private final String USER = System.getenv("USER");
-    private final String PASSWORD = System.getenv("PASSWORD");
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/69project";
+    private final String USER = "root";
+    private final String PASSWORD = "dp05092001";
+    private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
+    
     private Connection conn;
+
     private Utils utils;
 
     private final int DEFAULT_DIAMETER_KM = 10;
@@ -25,9 +28,9 @@ public class SearchService {
     public SearchService() throws ClassNotFoundException, SQLException {
         utils = new Utils();
 
-
-        //Register JDBC driver
-		Class.forName(System.getenv("CLASSNAME"));
+		// Class.forName(System.getenv("CLASSNAME"));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
         System.out.println("Successfully connected to MySQL!");
     }

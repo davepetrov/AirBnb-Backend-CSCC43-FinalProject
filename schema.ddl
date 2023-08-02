@@ -46,8 +46,6 @@ CREATE TABLE Booking (
     listingId INT,
     renter_userId INT,
     cancelledBy ENUM ('Host', 'Renter'),
-    startDate Date NOT NULL,
-    endDate Date NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                                    ON UPDATE CURRENT_TIMESTAMP, -- trigger
@@ -63,6 +61,7 @@ CREATE TABLE Booking (
 
 CREATE TABLE Calendar (
     listingId INT,
+    bookingId INT,
     availabilityDate DATE,
     price DECIMAL(10, 2),
     isAvailable BOOLEAN,
@@ -70,7 +69,10 @@ CREATE TABLE Calendar (
     PRIMARY KEY (listingId, availabilityDate),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
         ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (bookingId) REFERENCES Booking (bookingId)
+        ON DELETE CASCADE
+        ON UPDATE SET NULL
 );
 
 -------------------------RELATIONS-------------------------

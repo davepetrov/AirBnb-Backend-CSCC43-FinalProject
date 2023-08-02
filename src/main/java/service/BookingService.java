@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -20,9 +21,11 @@ import java.sql.Date;
 public class BookingService {
 
     //Database credentials
-    private final String CONNECTION = System.getenv("CONNECTION");
-    private final String USER = System.getenv("USER");
-    private final String PASSWORD = System.getenv("PASSWORD");
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/69project";
+    private final String USER = "root";
+    private final String PASSWORD = "dp05092001";
+    private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
+
     private Connection conn;
 
     private CalendarService calendarService;
@@ -31,50 +34,73 @@ public class BookingService {
         calendarService = new CalendarService();
 
         //Register JDBC driver
-		Class.forName(System.getenv("CLASSNAME"));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
         System.out.println("Successfully connected to MySQL!");
     }
 
-    public static void main(String[] args){
-        System.out.println("HI");
-    }
-
-    public boolean createBooking(int listingId, int renterId, int hostId, Date startDate, Date endDate) {
-    
-        LocalDate start = startDate.toLocalDate();
-        LocalDate end = endDate.toLocalDate();
-
-        List<LocalDate> dates = Stream.iterate(start, date -> date.plusDays(1))
-                .limit(ChronoUnit.DAYS.between(start, end) + 1)
-                .collect(Collectors.toList());
-
-        // Using calendarService.isListingAvailable(listingId, date), check every date between start and end date
-
-        for (LocalDate date: dates){
-            if (!calendarService.isListingAvailable(listingId, Date.valueOf(date))){
-                System.out.println("[Booking Failed] Listing is not available for one of the dates selected ("+  date.toString() +") between the startDate ("+  startDate.toString() +") and endDate ("+  endDate.toString());
-                return false;
-            }
-        }
-                
+    public boolean createBooking(int listingId, int renterId, Date startDate, Date endDate) {
+            
         try{
-            String sql = "INSERT INTO Booking (listingId, renter_userId, cancelledBy, startDate, endDate) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            String sql = "INSERT INTO Booking (listingId, renter_userId, cancelledBy) " +
+            "SELECT ?, ?, NULL " +
+            "FROM Calendar " +
+            "WHERE listingId = ? " +
+            "AND availabilityDate BETWEEN ? AND ? " +
+            "AND isAvailable = TRUE" +
+            "AND price != NULL" +
+            "GROUP BY listingId, availabilityDate " +
+            "HAVING COUNT(*) = DATEDIFF(?, ?) + 1;";
+
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, listingId);
             stmt.setInt(2, renterId);
-            stmt.setString(3, null);
+            stmt.setInt(3, listingId);
             stmt.setDate(4, startDate);
             stmt.setDate(5, endDate);
-            stmt.executeUpdate(sql);
+            stmt.setDate(6, startDate);
+            stmt.setDate(7, endDate);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                // Get the auto-generated bookingId from the inserted row
+                ResultSet generatedKeys = stmt.getGeneratedKeys();
+                int bookingId = -1;
+                if (generatedKeys.next()) {
+                    bookingId = generatedKeys.getInt(1);
+                }
+    
+                if (bookingId == -1) {
+                    System.out.println("[Booking Failed] Failed to get the generated bookingId.");
+                    return false;
+                }
+    
+                System.out.println("Successfully created a booking with bookingId: " + bookingId);
+    
+                // Update Calendar to set the bookingId for booked dates
+                String updateSql = "UPDATE Calendar " +
+                                   "SET bookingId = ? , isAvailable = false " +
+                                   "WHERE listingId = ? " +
+                                   "AND availabilityDate BETWEEN ? AND ? " +
+                                   "AND isAvailable = TRUE;";
+                PreparedStatement updateStmt = conn.prepareStatement(updateSql);
+                updateStmt.setInt(1, bookingId);
+                updateStmt.setInt(2, listingId);
+                updateStmt.setDate(3, startDate);
+                updateStmt.setDate(4, endDate);
+                updateStmt.executeUpdate();
+    
+                return true;
+            } else {
+                System.out.println("[Booking Failed] There is a date (1 or more) between the startDate and endDate that is/are not available.");
+                return false;
+            }
             
         } catch (SQLException e) {
             System.out.println("[Booking Failed] " + e.getMessage());
             return false;
         }
-        
-        System.out.println("Successfully created a booking!");
-        return true;
     }
 
 
@@ -102,7 +128,7 @@ public class BookingService {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, cancelledBy.name());
             stmt.setInt(2, bookingId);
-            stmt.executeUpdate(sql);
+            stmt.executeUpdate();
             System.out.println("Successfully cancelled a booking!");
         } catch (Exception e) {
             System.out.println("[Cancel Booking Failed] " + e.getMessage());
@@ -117,7 +143,7 @@ public class BookingService {
             String sql = "SELECT listingId FROM Booking WHERE bookingId = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, bookingId);
-            ResultSet rs = stmt.executeQuery(sql);
+            ResultSet rs = stmt.executeQuery();
             rs.next();
             int listingId = rs.getInt("listingId"); 
             return listingId;    
@@ -129,18 +155,31 @@ public class BookingService {
 
     public List<Booking> getBookingsByListingId(int listingId) {
         try {
-            String sql = "SELECT bookingId, listingId, renter_userId, cancelledBy FROM Booking WHERE listingId = ?";
+            String sql = "SELECT B.bookingId, B.listingId, B.renter_userId, B.cancelledBy, MIN(C.availabilityDate) AS startDate, MAX(C.availabilityDate) AS endDate " +
+                            "FROM Booking B " +
+                            "LEFT JOIN Calendar C ON B.bookingId = C.bookingId " +
+                            "WHERE B.listingId = ? " +
+                            "GROUP BY B.bookingId, B.listingId, B.renter_userId, B.cancelledBy";
+        
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, listingId);
-            ResultSet rs = stmt.executeQuery(sql);
+            ResultSet rs = stmt.executeQuery();
             List<Booking> bookings = new ArrayList<Booking>();
 
             while (rs.next()){
-                bookings.add(new Booking(
-                    rs.getInt("bookingId"), 
-                    rs.getInt("listingId"), 
-                    rs.getInt("renter_userId"), 
-                    UserType.valueOf(rs.getString("cancelledBy"))));
+                Booking booking = new Booking();
+                booking.setBookingId(rs.getInt("bookingId"));
+                booking.setListingId(rs.getInt("listingId"));
+                booking.setRenter_userId(rs.getInt("renter_userId"));
+                booking.setStartDate(rs.getDate("startDate"));
+                booking.setEndDate(rs.getDate("endDate"));
+                if (rs.getString("cancelledBy") != null) {
+                    booking.setCancelledBy(UserType.valueOf(rs.getString("cancelledBy")));
+                }
+                else{
+                    booking.setCancelledBy(null);
+                }
+                bookings.add(booking);
             }
             
             return bookings;

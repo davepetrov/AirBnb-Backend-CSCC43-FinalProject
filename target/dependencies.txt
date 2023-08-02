@@ -1,0 +1,28 @@
+digraph "com.example:demo:jar:1" { 
+	"com.example:demo:jar:1" -> "com.mysql:mysql-connector-j:jar:8.0.33:compile" ; 
+	"com.example:demo:jar:1" -> "org.projectlombok:lombok:jar:1.18.28:provided" ; 
+	"com.example:demo:jar:1" -> "org.slf4j:slf4j-api:jar:1.5.2:compile" ; 
+	"com.example:demo:jar:1" -> "org.slf4j:slf4j-log4j12:jar:1.5.2:compile" ; 
+	"com.example:demo:jar:1" -> "org.slf4j:jcl-over-slf4j:jar:1.5.2:compile" ; 
+	"com.example:demo:jar:1" -> "junit:junit:jar:4.4:test" ; 
+	"com.mysql:mysql-connector-j:jar:8.0.33:compile" -> "com.google.protobuf:protobuf-java:jar:3.21.9:compile" ; 
+	"org.slf4j:slf4j-log4j12:jar:1.5.2:compile" -> "log4j:log4j:jar:1.2.14:compile" ; 
+ } digraph "com.example:demo:jar:1" { 
+	"com.example:demo:jar:1" -> "com.mysql:mysql-connector-j:jar:8.0.33:compile" ; 
+	"com.example:demo:jar:1" -> "org.projectlombok:lombok:jar:1.18.28:provided" ; 
+	"com.example:demo:jar:1" -> "org.slf4j:slf4j-api:jar:1.5.2:compile" ; 
+	"com.example:demo:jar:1" -> "org.slf4j:slf4j-log4j12:jar:1.5.2:compile" ; 
+	"com.example:demo:jar:1" -> "org.slf4j:jcl-over-slf4j:jar:1.5.2:compile" ; 
+	"com.example:demo:jar:1" -> "junit:junit:jar:4.4:test" ; 
+	"com.mysql:mysql-connector-j:jar:8.0.33:compile" -> "com.google.protobuf:protobuf-java:jar:3.21.9:compile" ; 
+	"org.slf4j:slf4j-log4j12:jar:1.5.2:compile" -> "log4j:log4j:jar:1.2.14:compile" ; 
+ } digraph "com.example:demo:jar:1" { 
+	"com.example:demo:jar:1" -> "com.mysql:mysql-connector-j:jar:8.0.33:compile" ; 
+	"com.example:demo:jar:1" -> "org.projectlombok:lombok:jar:1.18.28:provided" ; 
+	"com.example:demo:jar:1" -> "org.slf4j:slf4j-api:jar:1.5.2:compile" ; 
+	"com.example:demo:jar:1" -> "org.slf4j:slf4j-log4j12:jar:1.5.2:compile" ; 
+	"com.example:demo:jar:1" -> "org.slf4j:jcl-over-slf4j:jar:1.5.2:compile" ; 
+	"com.example:demo:jar:1" -> "junit:junit:jar:4.4:test" ; 
+	"com.mysql:mysql-connector-j:jar:8.0.33:compile" -> "com.google.protobuf:protobuf-java:jar:3.21.9:compile" ; 
+	"org.slf4j:slf4j-log4j12:jar:1.5.2:compile" -> "log4j:log4j:jar:1.2.14:compile" ; 
+ } 

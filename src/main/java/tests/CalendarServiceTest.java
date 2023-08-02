@@ -1,6 +1,10 @@
+package tests;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Scanner;
+
+import service.CalendarService;
 
 public class CalendarServiceTest {
 
@@ -16,7 +20,7 @@ public class CalendarServiceTest {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("===== Calendar Service =====");
+            System.out.println("\n===== Calendar Service =====");
             System.out.println("1. Update Listing Availability");
             System.out.println("2. Update Listing Price");
             System.out.println("3. Check Listing Availability on a Date");
@@ -57,11 +61,28 @@ public class CalendarServiceTest {
         System.out.println("Enter availabilityDate (yyyy-mm-dd):");
         Date availabilityDate = Date.valueOf(scanner.next());
 
-        System.out.println("Is the listing available on this date? (true/false):");
-        boolean isAvailable = scanner.nextBoolean();
+        System.out.println("Is the listing available on this date? (T/F):");
+        boolean isAvailable;
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
+
+            if (input.equals("t") || input.equals("true")) {
+                isAvailable = true;
+
+                System.out.println("Enter price you want for this date:");
+                float price = scanner.nextFloat();
+                calendarService.updateListingPrice(listingId, availabilityDate, price);
+
+                break;
+            } else if (input.equals("f") || input.equals("false")) {
+                isAvailable = false;
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'T' or 'F'.");
+            }
+        }
 
         calendarService.updateListingAvailability(listingId, availabilityDate, isAvailable);
-        System.out.println("Listing availability updated successfully!");
     }
 
     private static void updateListingPrice(Scanner scanner, CalendarService calendarService) {
@@ -74,12 +95,7 @@ public class CalendarServiceTest {
         System.out.println("Enter price:");
         float price = scanner.nextFloat();
 
-        boolean result = calendarService.updateListingPrice(listingId, date, price);
-        if (result) {
-            System.out.println("Listing price updated successfully!");
-        } else {
-            System.out.println("Listing price update failed.");
-        }
+        calendarService.updateListingPrice(listingId, date, price);
     }
 
     private static void checkListingAvailabilityOnDate(Scanner scanner, CalendarService calendarService) {
@@ -89,12 +105,8 @@ public class CalendarServiceTest {
         System.out.println("Enter date (yyyy-mm-dd):");
         Date date = Date.valueOf(scanner.next());
 
-        boolean isAvailable = calendarService.isListingAvailable(listingId, date);
-        if (isAvailable) {
-            System.out.println("Listing is available on this date.");
-        } else {
-            System.out.println("Listing is not available on this date.");
-        }
+        System.out.print("\nAvailability for Listing "+ listingId+": \n ---------------------\n");
+        calendarService.getAvailabilityStatus(listingId, date);
     }
 
     private static void checkListingAvailabilityBetweenDates(Scanner scanner, CalendarService calendarService) {
@@ -107,11 +119,11 @@ public class CalendarServiceTest {
         System.out.println("Enter end date (yyyy-mm-dd):");
         Date endDate = Date.valueOf(scanner.next());
 
-        boolean isAvailable = calendarService.isListingAvailable(listingId, startDate, endDate);
-        if (isAvailable) {
-            System.out.println("Listing is available between the specified dates.");
-        } else {
-            System.out.println("Listing is not available between the specified dates.");
+        Map<Date, String> dateAvailabilityMap = calendarService.getAvailabilityStatus(listingId, startDate, endDate);
+        
+        System.out.print("\nAvailability for Listing: "+ listingId+" \n ------------\n");
+        for (Map.Entry<Date, String> entry : dateAvailabilityMap.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
         }
     }
 }

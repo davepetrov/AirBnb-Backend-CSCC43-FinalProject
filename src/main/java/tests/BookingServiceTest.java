@@ -1,3 +1,14 @@
+package tests;
+
+import java.sql.Date;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Scanner;
+
+import model.constant.UserType;
+import model.entity.Booking;
+import service.BookingService;
+
 public class BookingServiceTest {
 
     public static void main(String[] args) {
@@ -12,7 +23,7 @@ public class BookingServiceTest {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("===== Booking Service =====");
+            System.out.println("\n===== Booking Service =====");
             System.out.println("1. Create Booking");
             System.out.println("2. Host Cancel Booking");
             System.out.println("3. Renter Cancel Booking");
@@ -53,21 +64,13 @@ public class BookingServiceTest {
         System.out.println("Enter renterId:");
         int renterId = scanner.nextInt();
 
-        System.out.println("Enter hostId:");
-        int hostId = scanner.nextInt();
-
         System.out.println("Enter start date (yyyy-mm-dd):");
         Date startDate = Date.valueOf(scanner.next());
 
         System.out.println("Enter end date (yyyy-mm-dd):");
         Date endDate = Date.valueOf(scanner.next());
 
-        boolean result = bookingService.createBooking(listingId, renterId, hostId, startDate, endDate);
-        if (result) {
-            System.out.println("Booking created successfully!");
-        } else {
-            System.out.println("Booking creation failed.");
-        }
+        bookingService.createBooking(listingId, renterId, startDate, endDate);
     }
 
     private static void cancelBooking(Scanner scanner, BookingService bookingService, UserType userType) {
@@ -94,11 +97,21 @@ public class BookingServiceTest {
 
         List<Booking> bookings = bookingService.getBookingsByListingId(listingId);
         if (bookings != null && !bookings.isEmpty()) {
-            System.out.println("Bookings for Listing ID " + listingId + ":");
+            System.out.println("\nBookings for Listing ID " + listingId + "\n--------------------------------------------------------------------------");
             for (Booking booking : bookings) {
-                System.out.println("Booking ID: " + booking.getBookingId() +
-                        ", Renter ID: " + booking.getRenterId() +
-                        ", Cancelled By: " + booking.getCancelledBy());
+                if (booking.getCancelledBy() != null) {
+                    System.out.println("Booking ID: " + booking.getBookingId() +
+                            ", Renter ID: " + booking.getRenter_userId() +
+                            ", startDate: " + booking.getStartDate().toString() +
+                            ", endDate: " + booking.getEndDate().toString()+
+                            ", Cancelled By: " + booking.getCancelledBy());
+                } else {
+                     System.out.println("Booking ID: " + booking.getBookingId() +
+                            ", Renter ID: " + booking.getRenter_userId() +
+                            ", startDate: " + booking.getStartDate().toString() +
+                            ", endDate: " + booking.getEndDate().toString());
+                }
+                    
             }
         } else {
             System.out.println("No bookings found for Listing ID " + listingId);

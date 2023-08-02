@@ -1,6 +1,9 @@
+package tests;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Scanner;
+
+import service.UserService;
 
 public class UserServiceTest {
 
@@ -16,7 +19,7 @@ public class UserServiceTest {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("===== User Service =====");
+            System.out.println("\n===== User Service =====");
             System.out.println("1. Create User");
             System.out.println("2. Delete User");
             System.out.println("3. Update Credit Card");
@@ -55,7 +58,7 @@ public class UserServiceTest {
         String firstname = scanner.nextLine();
 
         System.out.println("Enter lastname:");
-        String lastname = scanner.nextLine();
+        String surname = scanner.nextLine();
 
         System.out.println("Enter date of birth (yyyy-mm-dd):");
         Date dob = Date.valueOf(scanner.nextLine());
@@ -67,7 +70,7 @@ public class UserServiceTest {
         String sin = scanner.nextLine();
 
         System.out.println("Enter postalcode:");
-        String postalcode = scanner.nextLine();
+        String postalCode = scanner.nextLine();
 
         System.out.println("Enter city:");
         String city = scanner.nextLine();
@@ -79,8 +82,7 @@ public class UserServiceTest {
         String creditcard = scanner.nextLine();
         creditcard = creditcard.equals("N/A") ? null : creditcard;
 
-        userService.createUser(firstname, lastname, dob, occupation, sin, postalcode, city, country, creditcard);
-        System.out.println("User created successfully!");
+        userService.createUser(firstname, surname, dob, occupation, sin, postalCode, city, country, creditcard);
     }
 
     private static void deleteUser(Scanner scanner, UserService userService) {
@@ -101,11 +103,11 @@ public class UserServiceTest {
         int userId = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.println("Enter new creditcard:");
+        System.out.println("Enter new creditcard (If want to empty, type N/A):");
         String creditcard = scanner.nextLine();
 
+        creditcard = creditcard.equals("N/A") ? null : creditcard;
         userService.updateCreditcard(userId, creditcard);
-        System.out.println("Credit card updated successfully!");
     }
 
     private static void isRenter(Scanner scanner, UserService userService) {
