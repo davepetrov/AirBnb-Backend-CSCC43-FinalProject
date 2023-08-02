@@ -28,10 +28,7 @@ public class BookingService {
 
     private Connection conn;
 
-    private CalendarService calendarService;
-        
     public BookingService() throws ClassNotFoundException, SQLException {
-        calendarService = new CalendarService();
 
         //Register JDBC driver
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -129,7 +126,7 @@ public class BookingService {
             stmt.setString(1, cancelledBy.name());
             stmt.setInt(2, bookingId);
             stmt.executeUpdate();
-            System.out.println("Successfully cancelled a booking!");
+
         } catch (Exception e) {
             System.out.println("[Cancel Booking Failed] " + e.getMessage());
             return false;

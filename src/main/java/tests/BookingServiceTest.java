@@ -77,18 +77,12 @@ public class BookingServiceTest {
         System.out.println("Enter bookingId:");
         int bookingId = scanner.nextInt();
 
-        boolean result;
         if (userType == UserType.Host) {
-            result = bookingService.hostCancelBooking(bookingId);
+            bookingService.hostCancelBooking(bookingId);
         } else {
-            result = bookingService.renterCancelBooking(bookingId);
+            bookingService.renterCancelBooking(bookingId);
         }
 
-        if (result) {
-            System.out.println("Booking canceled successfully!");
-        } else {
-            System.out.println("Booking cancellation failed.");
-        }
     }
 
     private static void getBookingsByListingId(Scanner scanner, BookingService bookingService) {

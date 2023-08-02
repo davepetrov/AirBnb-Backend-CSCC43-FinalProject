@@ -58,7 +58,7 @@ public class ReviewServiceTest {
         System.out.println("Enter rating (1 to 5):");
         int rating = scanner.nextInt();
 
-        scanner.nextLine(); // Consume the newline character after reading the int.
+        scanner.nextLine();
 
         System.out.println("Enter comment:");
         String comment = scanner.nextLine();
@@ -81,7 +81,7 @@ public class ReviewServiceTest {
         System.out.println("Enter rating (1 to 5):");
         int rating = scanner.nextInt();
 
-        scanner.nextLine(); // Consume the newline character after reading the int.
+        scanner.nextLine(); 
 
         System.out.println("Enter comment:");
         String comment = scanner.nextLine();
@@ -104,7 +104,7 @@ public class ReviewServiceTest {
         System.out.println("Enter rating (1 to 5):");
         int rating = scanner.nextInt();
 
-        scanner.nextLine(); // Consume the newline character after reading the int.
+        scanner.nextLine();
 
         System.out.println("Enter comment:");
         String comment = scanner.nextLine();

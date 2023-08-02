@@ -3,6 +3,7 @@ package service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ReviewService {
@@ -25,65 +26,100 @@ public class ReviewService {
     }
 
     public boolean renterReviewListing(int userId, int listingId, int rating, String comment) {
-        // TODO: Check if renter has rented listingId in the past week
-
         try {
-            String sql = "INSERT INTO Renter_Review_Listing (renterUserId, listingId, comment, rating) VALUES (?, ?, ?, ?)";
+            // Check if renter has rented the specified listing in the past week
+            String sql = "INSERT INTO Renter_Review_Listing (renterUserId, listingId, comment, rating) " +
+                         "SELECT ?, ?, ?, ? " +
+                         "FROM Booking " +
+                         "WHERE renter_userId = ? AND listingId = ? AND " +
+                         "created_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) " +
+                         "LIMIT 1";
+    
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
             stmt.setInt(2, listingId);
             stmt.setString(3, comment);
             stmt.setInt(4, rating);
-            stmt.executeUpdate();
-
-        } catch (Exception e) {
-            System.out.println("[Renter Review Listing Failed] " + e.getMessage());
+            stmt.setInt(5, userId);
+            stmt.setInt(6, listingId);
+    
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("Renter has not rented the specified listing in the past week.\n");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("[renterReviewListing Error] " + e.getMessage());
             return false;
         }
-
-        System.out.println("Successfully reviewed listing!");
+    
+        System.out.println("Successfully reviewed listing!\n");
         return true;
     }
 
     public boolean hostReviewRenter(int hostUserId, int renterUserId, int rating, String comment) {
-        // TODO: Check if renter has rented any of host's listings in the past week
-        
         try {
-            String sql = "INSERT INTO Host_Review_Renter (hostUserId, renterUserId, comment, rating) VALUES (?, ?, ?, ?)";
+            // Check if renter has rented any of host's listings in the past week
+            String sql = "INSERT INTO Host_Review_Renter (hostUserId, renterUserId, comment, rating) " +
+                         "SELECT ?, ?, ?, ? " +
+                         "FROM Booking B " +
+                         "INNER JOIN Listing L ON B.listingId = L.listingId " +
+                         "WHERE B.renter_userId = ? AND L.host_userId = ? AND " +
+                         "B.created_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) " +
+                         "LIMIT 1";
+    
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, hostUserId);
             stmt.setInt(2, renterUserId);
             stmt.setString(3, comment);
             stmt.setInt(4, rating);
-            stmt.executeUpdate();
-
-        } catch (Exception e) {
-            System.out.println("[Renter Review Listing Failed] " + e.getMessage());
+            stmt.setInt(5, renterUserId);
+            stmt.setInt(6, hostUserId);
+    
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("Renter has not rented any of the host's listings in the past week.\n");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("[hostReviewRenter Error] " + e.getMessage());
             return false;
         }
-
-        System.out.println("Successfully reviewed listing!");
+    
+        System.out.println("Successfully reviewed listing!\n");
         return true;
     }
 
     public boolean renterReviewHost(int renterUserId, int hostUserId, int rating, String comment) {
-        // TODO: Check if renter has rented any of host's listings in the past week
-        
         try {
-            String sql = "INSERT INTO Renter_Review_Host (renterUserId, hostUserId, comment, rating) VALUES (?, ?, ?, ?)";
+            // Check if renter has rented any of host's listings in the past week
+            String sql = "INSERT INTO Renter_Review_Host (renterUserId, hostUserId, comment, rating) " +
+                         "SELECT ?, ?, ?, ? " +
+                         "FROM Booking B " +
+                         "INNER JOIN Listing L ON B.listingId = L.listingId " +
+                         "WHERE B.renter_userId = ? AND L.host_userId = ? AND " +
+                         "B.created_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) " +
+                         "LIMIT 1";
+    
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, renterUserId);
             stmt.setInt(2, hostUserId);
             stmt.setString(3, comment);
             stmt.setInt(4, rating);
-            stmt.executeUpdate();
-
-        } catch (Exception e) {
-            System.out.println("[Renter Review Listing Failed] " + e.getMessage());
+            stmt.setInt(5, renterUserId);
+            stmt.setInt(6, hostUserId);
+    
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("Renter has not rented any of the host's listings in the past week.\n");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println("[renterReviewHost Error] " + e.getMessage());
             return false;
         }
-
-        System.out.println("Successfully reviewed listing!");
+    
+        System.out.println("Successfully reviewed host!\n");
         return true;
     }
 }
