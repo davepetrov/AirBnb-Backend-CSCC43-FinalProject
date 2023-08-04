@@ -25,7 +25,7 @@ public class UserServiceTest {
             System.out.println("3. Update Credit Card");
             System.out.println("4. Check if User is Renter");
             System.out.println("5. Exit");
-            System.out.println("6. => Switch to Listing Service ");
+            System.out.println("6. > Switch to Listing Service ");
 
             System.out.print("\nEnter your choice: ");
             

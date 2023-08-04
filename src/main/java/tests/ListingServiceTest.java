@@ -26,7 +26,8 @@ public class ListingServiceTest {
             System.out.println("1. Create Listing");
             System.out.println("2. Delete Listing");
             System.out.println("3. Exit");
-            System.out.println("4. => Switch to Booking Service");
+            System.out.println("4. > Switch to Booking Service");
+            System.out.println("5. < Switch to User Service");
 
             System.out.print("\nEnter your choice: ");
 
@@ -47,6 +48,9 @@ public class ListingServiceTest {
                     break;
                 case 4:
                     BookingServiceTest.main(args);
+                    break;
+                case 5:
+                    UserServiceTest.main(args);
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.\n");

@@ -29,7 +29,9 @@ public class BookingServiceTest {
             System.out.println("3. Renter Cancel Booking");
             System.out.println("4. Get Bookings by Listing ID");
             System.out.println("5. Exit");
-            System.out.println("6. => Switch to CalendarService");
+            System.out.println("6. > Switch to CalendarService");
+            System.out.println("7. < Switch to ListingService");
+
 
             System.out.print("\nEnter your choice: ");
 
@@ -56,6 +58,9 @@ public class BookingServiceTest {
                     break;
                 case 6:
                     CalendarServiceTest.main(args);
+                    break;
+                case 7:
+                    ListingServiceTest.main(args);
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");

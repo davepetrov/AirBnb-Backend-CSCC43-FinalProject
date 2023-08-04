@@ -23,7 +23,9 @@ public class ReviewServiceTest {
             System.out.println("2. Host Review Renter");
             System.out.println("3. Renter Review Host");
             System.out.println("4. Exit");
-            System.out.println("5. => Switch to Search Service");
+            System.out.println("5. > Switch to Search Service");
+            System.out.println("6. < Switch to Calendar Service");
+
 
             System.out.print("\nEnter your choice: ");
 
@@ -47,6 +49,9 @@ public class ReviewServiceTest {
                     break;
                 case 5:
                     SearchServiceTest.main(args);
+                    break;
+                case 6:
+                    CalendarServiceTest.main(args);
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");

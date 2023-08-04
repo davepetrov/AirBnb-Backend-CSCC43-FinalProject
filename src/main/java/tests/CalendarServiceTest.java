@@ -32,7 +32,9 @@ public class CalendarServiceTest {
             System.out.println("3. Check Listing Availability on a Date");
             System.out.println("4. Check Listing Availability between Dates");
             System.out.println("5. Exit");
-            System.out.println("6. => Switch to Review Service");
+            System.out.println("6. > Switch to Review Service");
+            System.out.println("7. < Switch to Booking Service");
+
 
             System.out.print("\nEnter your choice: ");
 
@@ -59,6 +61,9 @@ public class CalendarServiceTest {
                     break;
                 case 6:
                     ReviewServiceTest.main(args);
+                    break;
+                case 7:
+                    BookingServiceTest.main(args);
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
