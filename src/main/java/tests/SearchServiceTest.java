@@ -34,7 +34,7 @@ public class SearchServiceTest {
             System.out.println("3. Search Available Listings by [Filters]");
             System.out.println("4. Exit");
             System.out.println("5. > Switch to Reports Service");
-            System.out.println("6. < Switch to Search Service");
+            System.out.println("6. < Switch to Review Service");
 
             System.out.print("\nEnter your choice: ");
 
@@ -60,7 +60,7 @@ public class SearchServiceTest {
                     //TODO: ReportsServiceTest.main(args);
                     break;
                 case 6:
-                    SearchServiceTest.main(args);
+                    ReviewServiceTest.main(args);
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");

@@ -1,11 +1,13 @@
 package service;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -31,75 +33,38 @@ public class BookingService {
     public BookingService() throws ClassNotFoundException, SQLException {
 
         //Register JDBC driver
-        Class.forName("com.mysql.cj.jdbc.Driver");
+        Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
         System.out.println("Successfully connected to MySQL!");
     }
 
     public boolean createBooking(int listingId, int renterId, Date startDate, Date endDate) {
-            
-        try{
-            String sql = "INSERT INTO Booking (listingId, renter_userId, cancelledBy) " +
-            "SELECT ?, ?, NULL " +
-            "FROM Calendar " +
-            "WHERE listingId = ? " +
-            "AND availabilityDate BETWEEN ? AND ? " +
-            "AND isAvailable = TRUE" +
-            "AND price != NULL" +
-            "GROUP BY listingId, availabilityDate " +
-            "HAVING COUNT(*) = DATEDIFF(?, ?) + 1;";
-
-            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            stmt.setInt(1, listingId);
-            stmt.setInt(2, renterId);
-            stmt.setInt(3, listingId);
-            stmt.setDate(4, startDate);
-            stmt.setDate(5, endDate);
-            stmt.setDate(6, startDate);
-            stmt.setDate(7, endDate);
-
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                // Get the auto-generated bookingId from the inserted row
-                ResultSet generatedKeys = stmt.getGeneratedKeys();
-                int bookingId = -1;
-                if (generatedKeys.next()) {
-                    bookingId = generatedKeys.getInt(1);
-                }
+        try {
+            String callProcedureSQL = "{CALL CreateBookingAndUpdateCalendar(?, ?, ?, ?, ?)}";
+            CallableStatement callableStatement = conn.prepareCall(callProcedureSQL);
+            callableStatement.setInt(1, listingId);
+            callableStatement.setInt(2, renterId);
+            callableStatement.setDate(3, startDate);
+            callableStatement.setDate(4, endDate);
+            callableStatement.registerOutParameter(5, Types.INTEGER);  // Register the OUT parameter
     
-                if (bookingId == -1) {
-                    System.out.println("[Booking Failed] Failed to get the generated bookingId.");
-                    return false;
-                }
+            callableStatement.executeUpdate();
     
-                System.out.println("Successfully created a booking with bookingId: " + bookingId);
+            int result = callableStatement.getInt(5);  // Get the value of the OUT parameter
     
-                // Update Calendar to set the bookingId for booked dates
-                String updateSql = "UPDATE Calendar " +
-                                   "SET bookingId = ? , isAvailable = false " +
-                                   "WHERE listingId = ? " +
-                                   "AND availabilityDate BETWEEN ? AND ? " +
-                                   "AND isAvailable = TRUE;";
-                PreparedStatement updateStmt = conn.prepareStatement(updateSql);
-                updateStmt.setInt(1, bookingId);
-                updateStmt.setInt(2, listingId);
-                updateStmt.setDate(3, startDate);
-                updateStmt.setDate(4, endDate);
-                updateStmt.executeUpdate();
-    
+            if (result == 1) {
+                System.out.println("\nSuccessfully created a booking and updated Calendar!");
                 return true;
             } else {
-                System.out.println("[Booking Failed] There is a date (1 or more) between the startDate and endDate that is/are not available.");
+                System.out.println("\nFAILED to create a booking! At least one of the days is unavailable.");
                 return false;
             }
-            
         } catch (SQLException e) {
-            System.out.println("[Booking Failed] " + e.getMessage());
+            System.out.println("\n[Booking Failed] " + e.getMessage());
             return false;
         }
     }
-
 
     public boolean hostCancelBooking(int bookingId) {
         if (cancelBooking(bookingId, UserType.Host)){

@@ -29,8 +29,7 @@ public class SearchService {
     public SearchService() throws ClassNotFoundException, SQLException {
         utils = new Utils();
 
-		// Class.forName(System.getenv("CLASSNAME"));
-        Class.forName("com.mysql.cj.jdbc.Driver");
+        Class.forName(CLASSNAME);
         
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
         System.out.println("Successfully connected to MySQL!");
