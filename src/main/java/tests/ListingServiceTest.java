@@ -1,11 +1,9 @@
 package tests;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Scanner;
 
 import model.constant.ListingType;
-import model.entity.Listing;
 import service.ListingService;
 
 public class ListingServiceTest {

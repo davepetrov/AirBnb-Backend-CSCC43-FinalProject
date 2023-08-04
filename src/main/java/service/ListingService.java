@@ -1,19 +1,11 @@
 package service;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import model.constant.ListingType;
-import model.constant.UserType;
-import model.entity.Booking;
-import model.entity.Listing;
 
 public class ListingService {
 
