@@ -18,7 +18,6 @@ CREATE TABLE Listing (
     listingId INT NOT NULL AUTO_INCREMENT,
     host_userId INT,
     listingType ENUM ('House', 'Apartment', 'Guesthouse', 'Hotel'),
-    isActive BOOLEAN,
     locationLat FLOAT,
     locationLong FLOAT,
     postalCode VARCHAR(10),
@@ -46,6 +45,8 @@ CREATE TABLE Booking (
     listingId INT,
     renter_userId INT,
     cancelledBy ENUM ('Host', 'Renter'),
+    startDate DATE,
+    endDate DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                                    ON UPDATE CURRENT_TIMESTAMP, -- trigger
@@ -149,57 +150,47 @@ CREATE TABLE Renter_Review_Listing (
 
 -------------------------TRIGGERS-------------------------
 
--- Trigger for when a booking created, update the calednar availability
-CREATE TRIGGER ToBookAvailabilityTrigger
-    AFTER INSERT ON Booking
+-- Insert availaibility in Calendar, when a booking takes place 
+CREATE TRIGGER InsertAvailabilityOnBookingTrigger
+AFTER INSERT ON Booking
+FOR EACH ROW
+BEGIN
+  DECLARE start_date DATE;
+  DECLARE end_date DATE;
+  DECLARE i INT DEFAULT 0;
+
+  SET start_date = NEW.startDate;
+  SET end_date = NEW.endDate;
+
+  WHILE start_date + INTERVAL i DAY <= end_date DO
+    INSERT INTO Calendar (listingId, bookingId, availabilityDate, isAvailable) 
+    VALUES (NEW.listingId, NEW.bookingId, start_date + INTERVAL i DAY, false);
+    SET i = i + 1;
+  END WHILE;
+  
+END;
+
+-- When a cancellation takes place, update unavailability in Calendar
+CREATE TRIGGER UpdateAvailabilityOnCancelTrigger
+    AFTER UPDATE ON Booking
     FOR EACH ROW
     BEGIN
-        UPDATE Calendar
-        SET isAvailable = 0
-        WHERE listingId = NEW.listingId AND availabilityDate BETWEEN NEW.startDate AND NEW.endDate;
-    END
+        IF NEW.cancelledBy IS NOT NULL THEN
+            UPDATE Calendar
+            SET isAvailable = TRUE
+            WHERE listingId = NEW.listingId AND availabilityDate BETWEEN NEW.startDate AND NEW.endDate;
+        END IF;
+    END;
 
 -- Trigger for when a listing is deleted, Cancel all future bookings (By Host)
-CREATE TRIGGER ToCancelBookingOnListingDeletion
+CREATE TRIGGER CancelFutureBookingsOnListingDeletionTrigger
     AFTER DELETE ON Listing
     FOR EACH ROW
     BEGIN
         UPDATE Booking
-        SET cancelledBy = "Host"
-        WHERE listingId = OLD.listingId AND availabilityDate > curdate();
-    END
-
-
--- Trigger for when a host cancels the day of a booking, the availability of the listing is set to false for that current day
-CREATE TRIGGER ToCancelBookingOnDayOf
-    AFTER UPDATE ON Booking
-    FOR EACH ROW
-    BEGIN
-        IF (NEW.startDate = curdate()) THEN
-            UPDATE Calendar
-            SET isAvailable = 0
-            WHERE listingId = OLD.listingId AND availabilityDate = OLD.startDate;
-        END IF;
-    END
-
--- Trigger for when a booking is cancelled, the availability of the listing is set to true for the days of the cancelled booking
-CREATE TRIGGER trg_booking_cancelled
-AFTER UPDATE ON Booking
-FOR EACH ROW
-BEGIN
-    -- Check if the 'cancelledBy' column has been updated to 'Host' or 'Renter'
-    IF NEW.cancelledBy IS NOT NULL AND NEW.cancelledBy <> OLD.cancelledBy THEN
-        -- Retrieve the bookingId of the cancelled booking
-        DECLARE cancelledBookingId INT;
-        SET cancelledBookingId = NEW.bookingId;
-
-        -- Set the availability of the listing to true for the days of the cancelled booking
-        UPDATE Calendar
-        SET isAvailable = TRUE
-        WHERE bookingId = cancelledBookingId;
-
-    END IF;
-END;
+        SET cancelledBy = 'Host'
+        WHERE listingId = OLD.listingId AND startDate > CURDATE();
+    END;
 
 -------------------------CONFIGS-------------------------
 INSERT INTO Amenities (amenityId, amenityName) VALUES 

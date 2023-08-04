@@ -24,11 +24,11 @@ public class ListingServiceTest {
         while (true) {
             System.out.println("\n===== Listing Service =====");
             System.out.println("1. Create Listing");
-            System.out.println("2. Update Listing Active Status");
-            System.out.println("3. Delete Listing");
-            System.out.println("4. Get All Active Listings");
-            System.out.println("5. Exit");
-            System.out.print("Enter your choice: ");
+            System.out.println("2. Delete Listing");
+            System.out.println("3. Exit");
+            System.out.println("4. => Switch to Booking Service");
+
+            System.out.print("\nEnter your choice: ");
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character after reading the int.
@@ -38,20 +38,18 @@ public class ListingServiceTest {
                     createListing(scanner, listingService);
                     break;
                 case 2:
-                    updateListingActiveStatus(scanner, listingService);
-                    break;
-                case 3:
                     deleteListing(scanner, listingService);
                     break;
-                case 4:
-                    getAllActiveListings(listingService);
-                    break;
-                case 5:
+                case 3:
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
+                    break;
+                case 4:
+                    BookingServiceTest.main(args);
+                    break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please try again.\n");
             }
         }
     }
@@ -89,30 +87,6 @@ public class ListingServiceTest {
         String country = scanner.nextLine();
 
         listingService.createListing(hostUserId, type, locationLat, locationLong, postalCode, city, country);
-        System.out.println("Listing created successfully!");
-    }
-
-    private static void updateListingActiveStatus(Scanner scanner, ListingService listingService) {
-        System.out.println("Enter listingId:");
-        int listingId = scanner.nextInt();
-
-        System.out.println("Enter new status (T/F):");
-        boolean isActive;
-        while (true) {
-            String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
-
-            if (input.equals("t") || input.equals("true")) {
-                isActive = true;
-                break;
-            } else if (input.equals("f") || input.equals("false")) {
-                isActive = false;
-                break;
-            } else {
-                System.out.println("Invalid input. Please enter 'T' or 'F'.");
-            }
-        }
-
-        listingService.updateListingActiveStatus(listingId, isActive);
     }
 
     private static void deleteListing(Scanner scanner, ListingService listingService) {
@@ -120,20 +94,5 @@ public class ListingServiceTest {
         int listingId = scanner.nextInt();
 
         listingService.deleteListing(listingId);
-    }
-
-    private static void getAllActiveListings(ListingService listingService) {
-        List<Listing> activeListings = listingService.getAllActiveListings();
-        if (activeListings != null && !activeListings.isEmpty()) {
-            System.out.println("\nFollowing are active listings:\n------------------------------");
-            
-            int i=1;
-            for (Listing listing : activeListings) {
-                System.out.println(i+". "+listing);
-                i++;
-            }
-        } else {
-            System.out.println("No active listings found.\n");
-        }
     }
 }

@@ -8,7 +8,6 @@ public class Listing {
     private int listingId; // PK
     private int host_userId; // FK
     private ListingType listingType;
-    private boolean isActive;
     private double locationLat;
     private double locationLong;
     private String postalCode;
@@ -22,13 +21,13 @@ public class Listing {
     public String toString() {
         if (distance!=null){
             return "Listing [listingId=" + listingId + ", host_userId=" + host_userId + ", listingType=" + listingType
-                    + ", isActive=" + isActive + ", locationLat=" + locationLat + ", locationLong=" + locationLong
+                    + ", locationLat=" + locationLat + ", locationLong=" + locationLong
                     + ", postalCode=" + postalCode + ", city=" + city + ", country=" + country + ", distance=" + distance
                     + "]";
 
         } else {
             return "Listing [listingId=" + listingId + ", host_userId=" + host_userId + ", listingType=" + listingType
-                    + ", isActive=" + isActive + ", locationLat=" + locationLat + ", locationLong=" + locationLong
+                    + ", locationLat=" + locationLat + ", locationLong=" + locationLong
                     + ", postalCode=" + postalCode + ", city=" + city + ", country=" + country + "]";
         }
     }

@@ -29,7 +29,9 @@ public class BookingServiceTest {
             System.out.println("3. Renter Cancel Booking");
             System.out.println("4. Get Bookings by Listing ID");
             System.out.println("5. Exit");
-            System.out.print("Enter your choice: ");
+            System.out.println("6. => Switch to CalendarService");
+
+            System.out.print("\nEnter your choice: ");
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character after reading the int.
@@ -51,6 +53,10 @@ public class BookingServiceTest {
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
+                    break;
+                case 6:
+                    CalendarServiceTest.main(args);
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }

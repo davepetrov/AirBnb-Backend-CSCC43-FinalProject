@@ -7,11 +7,16 @@ import java.util.List;
 import java.util.Scanner;
 
 import model.Dto.ListingSearch;
+import model.constant.SortBy;
 import service.SearchService;
+import service.Utils;
 
 public class SearchServiceTest {
+    private static Utils utils;
 
     public static void main(String[] args) {
+        utils = new Utils();
+
         SearchService searchService;
         try {
             searchService = new SearchService();
@@ -24,68 +29,63 @@ public class SearchServiceTest {
 
         while (true) {
             System.out.println("\n===== Search Service =====");
-            System.out.println("1. Find Listings by Latitude and Longitude with Distance (Sort by Price)");
-            System.out.println("2. Find Listings by Latitude and Longitude with Distance (Sort by Distance)");
-            System.out.println("3. Find Listings by Exact Address (Sort by Price)");
-            System.out.println("4. Search Listings by Filters (Sort by Price)");
-            System.out.println("5. Exit");
-            System.out.print("Enter your choice: ");
+            System.out.println("1. Search Available Listings by [Latitude and Longitude with Distance]");
+            System.out.println("2. Search Available Listings by [Exact Address (postal code, city, country)]");
+            System.out.println("3. Search Available Listings by [Filters]");
+            System.out.println("4. Exit");
+            System.out.println("5. => Switch to Reports Service");
+            System.out.print("\nEnter your choice: ");
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character after reading the int.
 
             switch (choice) {
                 case 1:
-                    findListingsByLatitudeLongitudeWithDistanceSortByPrice(scanner, searchService);
+                    findListingsByLatitudeLongitudeWithDistance(scanner, searchService);
                     break;
                 case 2:
-                    findListingsByLatitudeLongitudeWithDistanceSortByDistance(scanner, searchService);
-                    break;
-                case 3:
                     findListingSearchByExactAddressSortByPrice(scanner, searchService);
                     break;
-                case 4:
-                    searchListingsByFiltersSortByPrice(scanner, searchService);
+                case 3:
+                    searchListingsByFilters(scanner, searchService);
                     break;
-                case 5:
+                case 4:
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
+                    break;
+                case 5:
+                    //TODO: ReportsServiceTest.main(args);
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
-    private static void findListingsByLatitudeLongitudeWithDistanceSortByPrice(Scanner scanner, SearchService searchService) {
-        System.out.println("Enter start date (yyyy-MM-dd):");
-        Date startDate = Date.valueOf(scanner.nextLine());
+    private static void findListingsByLatitudeLongitudeWithDistance(Scanner scanner, SearchService searchService) {
 
-        System.out.println("Enter end date (yyyy-MM-dd):");
-        Date endDate = Date.valueOf(scanner.nextLine());
+        System.out.println("Include start and end dates? (Y/N):");
+        Date startDate = null;
+        Date endDate = null;
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
 
-        System.out.println("Enter latitude:");
-        double latitude = scanner.nextDouble();
+            if (input.equals("y") || input.equals("yes")) {
 
-        System.out.println("Enter longitude:");
-        double longitude = scanner.nextDouble();
+                System.out.println("Enter start date (yyyy-MM-dd):");
+                startDate = Date.valueOf(scanner.nextLine());
 
-        System.out.println("Enter radius in kilometers (Default: 10):");
-        int radiusKm = scanner.nextInt();
+                System.out.println("Enter end date (yyyy-MM-dd):");
+                endDate = Date.valueOf(scanner.nextLine());
 
-        System.out.println("Sort by price (true/false):");
-        boolean isAscending = scanner.nextBoolean();
-
-        List<ListingSearch> results = searchService.findListingsByLatitudeLongitudeWithDistanceSortByPrice(startDate, endDate, latitude, longitude, radiusKm, isAscending);
-        displayListingSearchResults(results);
-    }
-
-    private static void findListingsByLatitudeLongitudeWithDistanceSortByDistance(Scanner scanner, SearchService searchService) {
-        System.out.println("Enter start date (yyyy-MM-dd):");
-        Date startDate = Date.valueOf(scanner.nextLine());
-
-        System.out.println("Enter end date (yyyy-MM-dd):");
-        Date endDate = Date.valueOf(scanner.nextLine());
+                break;
+            } else if (input.equals("n") || input.equals("no")) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'Y' or 'N'.");
+            }
+        }
 
         System.out.println("Enter latitude:");
         double latitude = scanner.nextDouble();
@@ -96,17 +96,65 @@ public class SearchServiceTest {
         System.out.println("Enter radius in kilometers (Default: 10):");
         int radiusKm = scanner.nextInt();
 
-        List<ListingSearch> results = searchService.findListingsByLatitudeLongitudeWithDistanceSortByDistance(startDate, endDate, latitude, longitude, radiusKm);
+        System.out.println("Sort by price or distance? (P/D)");
+        SortBy sortBy;
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
+
+            if (input.equals("p") || input.equals("price")) {
+                sortBy = SortBy.PRICE;
+                break;
+            } else if (input.equals("d") || input.equals("distance")) {
+                sortBy = SortBy.DISTANCE;
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'P' or 'D'.");
+            }
+        }
+
+        System.out.println("Sort in what order Ascending or Descending? (asc/dsc):");
+        boolean isAscending;
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
+
+            if (input.equals("asc") || input.equals("ascending")) {
+                isAscending = true;
+                break;
+            } else if (input.equals("dsc") || input.equals("descending")) {
+                isAscending = false;
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'asc' or 'dsc'.");
+            }
+        }
+
+        List<ListingSearch> results = searchService.findAvailableListingsByLatitudeLongitude(startDate, endDate, latitude, longitude, radiusKm, isAscending, sortBy);
         displayListingSearchResults(results);
     }
+
 
     private static void findListingSearchByExactAddressSortByPrice(Scanner scanner, SearchService searchService) {
-        System.out.println("Enter start date (yyyy-MM-dd):");
-        Date startDate = Date.valueOf(scanner.nextLine());
+        System.out.println("Include start and end dates? (Y/N):");
+        Date startDate = null;
+        Date endDate = null;
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
 
-        System.out.println("Enter end date (yyyy-MM-dd):");
-        Date endDate = Date.valueOf(scanner.nextLine());
+            if (input.equals("y") || input.equals("yes")) {
 
+                System.out.println("Enter start date (yyyy-MM-dd):");
+                startDate = Date.valueOf(scanner.nextLine());
+
+                System.out.println("Enter end date (yyyy-MM-dd):");
+                endDate = Date.valueOf(scanner.nextLine());
+
+                break;
+            } else if (input.equals("n") || input.equals("no")) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'Y' or 'N'.");
+            }
+        }
         System.out.println("Enter postal code:");
         String postalCode = scanner.nextLine();
 
@@ -116,29 +164,61 @@ public class SearchServiceTest {
         System.out.println("Enter country:");
         String country = scanner.nextLine();
 
-        System.out.println("Sort by price (true/false):");
-        boolean isAscending = scanner.nextBoolean();
-
-        List<ListingSearch> results = searchService.findListingSearchByExactAddressSortByPrice(startDate, endDate, postalCode, city, country, isAscending);
+        List<ListingSearch> results = searchService.findAvailableListingSearchByExactAddress(startDate, endDate, postalCode, city, country);
         displayListingSearchResults(results);
     }
 
-    private static void searchListingsByFiltersSortByPrice(Scanner scanner, SearchService searchService) {
-        System.out.println("Enter start date (yyyy-MM-dd):");
-        Date startDate = Date.valueOf(scanner.nextLine());
+    private static void searchListingsByFilters(Scanner scanner, SearchService searchService) {
+        System.out.println("Include start and end dates? (Y/N):");
+        Date startDate = null;
+        Date endDate = null;
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
 
-        System.out.println("Enter end date (yyyy-MM-dd):");
-        Date endDate = Date.valueOf(scanner.nextLine());
+            if (input.equals("y") || input.equals("yes")) {
+
+                System.out.println("Enter start date (yyyy-MM-dd):");
+                startDate = Date.valueOf(scanner.nextLine());
+
+                System.out.println("Enter end date (yyyy-MM-dd):");
+                endDate = Date.valueOf(scanner.nextLine());
+
+                break;
+            } else if (input.equals("n") || input.equals("no")) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'Y' or 'N'.");
+            }
+        }
 
         System.out.println("Enter postal code (or leave empty for any):");
         String postalCode = scanner.nextLine();
-
-        System.out.println("Enter amenities separated by commas (e.g., wifi,pool):");
-        String amenitiesInput = scanner.nextLine();
-        String[] amenitiesArray = amenitiesInput.split(",");
         List<String> amenities = new ArrayList<>();
-        if (!amenitiesInput.isEmpty()) {
-            amenities = new ArrayList<>(Arrays.asList(amenitiesArray));
+        System.out.println("\nAll possible Amenities\n--------------------------\n" + utils.getAllAmenities());
+        while (true) {
+            System.out.println("\nEnter amenities separated by commas and first letter capitalized\n(e.g., Wifi,Smoke alarm,Carbon monoxide alarm) (or leave empty for any):");
+
+            String amenitiesInput = scanner.nextLine();
+            String[] amenitiesArray = amenitiesInput.split(",");
+        
+            boolean allValid = true;
+            if (!amenitiesInput.isEmpty()) {
+                for (String a : amenitiesArray) {
+                    if (!utils.isValidAmenity(a)) {
+                        System.out.println("Invalid amenity: " + a);
+                        allValid = false;
+                        break;
+                    }
+                    amenities.add(a);
+                }
+        
+                if (allValid) {
+                    break;
+                }
+            }
+            else{
+                break;
+            }
         }
 
         System.out.println("Enter minimum price (or leave empty for any):");
@@ -155,20 +235,51 @@ public class SearchServiceTest {
             maxPrice = Double.parseDouble(maxPriceStr);
         }
 
-        System.out.println("Sort by price (true/false):");
-        boolean isAscending = scanner.nextBoolean();
+        System.out.println("Sort by price or distance? (P/D)");
+        SortBy sortBy;
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
 
-        List<ListingSearch> results = searchService.searchListingsByFiltersSortByPrice(postalCode, amenities, startDate, endDate, minPrice, maxPrice, isAscending);
+            if (input.equals("p") || input.equals("price")) {
+                sortBy = SortBy.PRICE;
+                break;
+            } else if (input.equals("d") || input.equals("distance")) {
+                sortBy = SortBy.DISTANCE;
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'P' or 'D'.");
+            }
+        }
+
+        System.out.println("Sort in what order Ascending or Descending? (asc/dsc):");
+        boolean isAscending;
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
+
+            if (input.equals("asc") || input.equals("ascending")) {
+                isAscending = true;
+                break;
+            } else if (input.equals("dsc") || input.equals("descending")) {
+                isAscending = false;
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'asc' or 'dsc'.");
+            }
+        }
+
+
+        List<ListingSearch> results = searchService.searchAvailableListingsByFilters(postalCode, amenities, startDate, endDate, minPrice, maxPrice, isAscending, sortBy);
         displayListingSearchResults(results);
     }
 
     private static void displayListingSearchResults(List<ListingSearch> results) {
         if (results != null && !results.isEmpty()) {
+            System.out.println("\nFollowing are available listings with your Search:\n-------------------------------------------------------");
             for (ListingSearch listing : results) {
                 System.out.println(listing);
             }
         } else {
-            System.out.println("No listings found.");
+            System.out.println("\nNo listings found.");
         }
     }
 }

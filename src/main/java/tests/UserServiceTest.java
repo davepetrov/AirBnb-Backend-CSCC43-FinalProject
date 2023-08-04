@@ -25,7 +25,10 @@ public class UserServiceTest {
             System.out.println("3. Update Credit Card");
             System.out.println("4. Check if User is Renter");
             System.out.println("5. Exit");
-            System.out.print("Enter your choice: ");
+            System.out.println("6. => Switch to Listing Service ");
+
+            System.out.print("\nEnter your choice: ");
+            
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline left-over
@@ -47,6 +50,9 @@ public class UserServiceTest {
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
+                case 6:
+                    ListingServiceTest.main(args);
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }

@@ -16,13 +16,11 @@ VALUES ('Roger', 'Federer', '1985-01-01', '3333333333', 'Athlete', 'L4J0A3', 'Va
 
 ----- LISTINGS -----
 
--- Not active, owned by user 3
-INSERT INTO Listing (hostUserId, listingType, isActive, locationLat, locationLong, postalCode, city, country)
-VALUES (3, 'House', 0, 43.6532, 79.3832, 'L4J0A3', 'Toronto', 'Canada');
+INSERT INTO Listing (hostUserId, listingType, locationLat, locationLong, postalCode, city, country)
+VALUES (3, 'House', 43.6532, 79.3832, 'L4J0A3', 'Toronto', 'Canada');
 
--- Active, owned by user 3
-INSERT INTO Listing (hostUserId, listingType, isActive, locationLat, locationLong, postalCode, city, country)
-VALUES (3, 'Apartment', 1, 43.6532, 79.3832, 'L4J0A3', 'Vancouver', 'Canada');
+INSERT INTO Listing (hostUserId, listingType, locationLat, locationLong, postalCode, city, country)
+VALUES (3, 'Apartment', 43.6532, 79.3832, 'L4J0A3', 'Vancouver', 'Canada');
 
 ----- Amenties the Listings offer -----
 

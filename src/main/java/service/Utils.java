@@ -41,4 +41,8 @@ public class Utils {
     public Boolean isValidAmenity(String amenityName) {
         return amenityNames.contains(amenityName);
     }
+
+    public List<String> getAllAmenities(){
+        return amenityNames;
+    }
 }

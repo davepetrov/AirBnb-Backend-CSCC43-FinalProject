@@ -135,21 +135,6 @@ public class BookingService {
 
     }
 
-    private int getListingId(int bookingId){
-        try {
-            String sql = "SELECT listingId FROM Booking WHERE bookingId = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, bookingId);
-            ResultSet rs = stmt.executeQuery();
-            rs.next();
-            int listingId = rs.getInt("listingId"); 
-            return listingId;    
-        } catch (Exception e) {
-            System.out.println("[Get Listing ID Failed] " + e.getMessage());
-            return -1;
-        }
-    }
-
     public List<Booking> getBookingsByListingId(int listingId) {
         try {
             String sql = "SELECT B.bookingId, B.listingId, B.renter_userId, B.cancelledBy, MIN(C.availabilityDate) AS startDate, MAX(C.availabilityDate) AS endDate " +

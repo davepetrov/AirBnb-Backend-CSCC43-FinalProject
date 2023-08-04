@@ -23,7 +23,9 @@ public class ReviewServiceTest {
             System.out.println("2. Host Review Renter");
             System.out.println("3. Renter Review Host");
             System.out.println("4. Exit");
-            System.out.print("Enter your choice: ");
+            System.out.println("5. => Switch to Search Service");
+
+            System.out.print("\nEnter your choice: ");
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character after reading the int.
@@ -42,6 +44,10 @@ public class ReviewServiceTest {
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
+                    break;
+                case 5:
+                    SearchServiceTest.main(args);
+                    break;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
