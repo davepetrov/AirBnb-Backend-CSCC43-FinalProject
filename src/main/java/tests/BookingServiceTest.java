@@ -69,24 +69,30 @@ public class BookingServiceTest {
     }
 
     private static void createBooking(Scanner scanner, BookingService bookingService) {
-        System.out.println("Enter listingId:");
-        int listingId = scanner.nextInt();
+        int listingId;
+        int renterId;
+        Date startDate;
+        Date endDate;
 
-        System.out.println("Enter renterId:");
-        int renterId = scanner.nextInt();
+        System.out.println("Enter listingId (Required):");
+        listingId = scanner.nextInt();
 
-        System.out.println("Enter start date (yyyy-mm-dd):");
-        Date startDate = Date.valueOf(scanner.next());
+        System.out.println("Enter renterId (Required):");
+        renterId = scanner.nextInt();
 
-        System.out.println("Enter end date (yyyy-mm-dd):");
-        Date endDate = Date.valueOf(scanner.next());
+        System.out.println("Enter start date (yyyy-mm-dd)(Required):");
+        startDate = Date.valueOf(scanner.next());
+
+        System.out.println("Enter end date (yyyy-mm-dd)(Required):");
+        endDate = Date.valueOf(scanner.next());
 
         bookingService.createBooking(listingId, renterId, startDate, endDate);
     }
 
     private static void cancelBooking(Scanner scanner, BookingService bookingService, UserType userType) {
-        System.out.println("Enter bookingId:");
-        int bookingId = scanner.nextInt();
+        int bookingId;
+        System.out.println("Enter bookingId (Required):");
+        bookingId = scanner.nextInt();
 
         if (userType == UserType.Host) {
             bookingService.hostCancelBooking(bookingId);

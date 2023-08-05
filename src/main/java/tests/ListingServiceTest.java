@@ -57,8 +57,16 @@ public class ListingServiceTest {
     }
 
     private static void createListing(Scanner scanner, ListingService listingService) {
+        int hostUserId;
+        ListingType type;
+        float locationLat;
+        float locationLong;
+        String postalCode;
+        String city;
+        String country;
+
         System.out.println("Enter hostUserId:");
-        int hostUserId = scanner.nextInt();
+        hostUserId = scanner.nextInt();
         scanner.nextLine();
 
         String typeString = null; 
@@ -70,23 +78,23 @@ public class ListingServiceTest {
             }
             System.out.println("Invalid ListingType. Please try again.\n");
         }
-        ListingType type = ListingType.valueOf(typeString);
+        type = ListingType.valueOf(typeString);
 
         System.out.println("Enter locationLat:");
-        float locationLat = scanner.nextFloat();
+        locationLat = scanner.nextFloat();
 
         System.out.println("Enter locationLong:");
-        float locationLong = scanner.nextFloat();
+        locationLong = scanner.nextFloat();
         scanner.nextLine();
 
-        System.out.println("Enter postalCode:");
-        String postalCode = scanner.nextLine();
+        System.out.println("Enter Postal Code:");
+        postalCode = scanner.nextLine();
 
-        System.out.println("Enter city:");
-        String city = scanner.nextLine();
+        System.out.println("Enter City:");
+        city = scanner.nextLine();
 
-        System.out.println("Enter country:");
-        String country = scanner.nextLine();
+        System.out.println("Enter Country:");
+        country = scanner.nextLine();
 
         listingService.createListing(hostUserId, type, locationLat, locationLong, postalCode, city, country);
     }

@@ -23,7 +23,7 @@ public class ReviewService {
         System.out.println("Successfully connected to MySQL!");
     }
 
-    public boolean renterReviewListing(int userId, int listingId, int rating, String comment) {
+    public void renterReviewListing(int userId, int listingId, int rating, String comment) {
         try {
             // Check if renter has rented the specified listing in the past week
             String sql = "INSERT INTO Renter_Review_Listing (renterUserId, listingId, comment, rating) " +
@@ -44,18 +44,16 @@ public class ReviewService {
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
                 System.out.println("Renter has not rented the specified listing in the past week.\n");
-                return false;
+            }
+            else{
+                System.out.println("Successfully reviewed listing!\n");
             }
         } catch (SQLException e) {
             System.out.println("[renterReviewListing Error] " + e.getMessage());
-            return false;
         }
-    
-        System.out.println("Successfully reviewed listing!\n");
-        return true;
     }
 
-    public boolean hostReviewRenter(int hostUserId, int renterUserId, int rating, String comment) {
+    public void hostReviewRenter(int hostUserId, int renterUserId, int rating, String comment) {
         try {
             // Check if renter has rented any of host's listings in the past week
             String sql = "INSERT INTO Host_Review_Renter (hostUserId, renterUserId, comment, rating) " +
@@ -77,18 +75,16 @@ public class ReviewService {
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
                 System.out.println("Renter has not rented any of the host's listings in the past week.\n");
-                return false;
+            }
+            else{
+                System.out.println("Successfully reviewed listing!\n");
             }
         } catch (SQLException e) {
             System.out.println("[hostReviewRenter Error] " + e.getMessage());
-            return false;
         }
-    
-        System.out.println("Successfully reviewed listing!\n");
-        return true;
     }
 
-    public boolean renterReviewHost(int renterUserId, int hostUserId, int rating, String comment) {
+    public void renterReviewHost(int renterUserId, int hostUserId, int rating, String comment) {
         try {
             // Check if renter has rented any of host's listings in the past week
             String sql = "INSERT INTO Renter_Review_Host (renterUserId, hostUserId, comment, rating) " +
@@ -110,14 +106,14 @@ public class ReviewService {
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
                 System.out.println("Renter has not rented any of the host's listings in the past week.\n");
-                return false;
+                return;
+            }
+            else{
+                System.out.println("Successfully reviewed host!\n");
             }
         } catch (SQLException e) {
             System.out.println("[renterReviewHost Error] " + e.getMessage());
-            return false;
         }
     
-        System.out.println("Successfully reviewed host!\n");
-        return true;
     }
 }

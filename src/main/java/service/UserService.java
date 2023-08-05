@@ -49,7 +49,7 @@ public class UserService {
     }
 
 
-    public boolean deleteUser(int userId) {
+    public void deleteUser(int userId) {
         try {
             String sql = "DELETE FROM BNBUser WHERE userId = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -57,10 +57,8 @@ public class UserService {
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("[User Deletion Failed] " + e.getMessage());
-            return false;
         }
         System.out.println("Successfully deleted a user!\n");
-        return true;
     }
 
     public void updateCreditcard(int userId, String creditcard) {

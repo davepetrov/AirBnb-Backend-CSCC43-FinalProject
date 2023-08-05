@@ -32,7 +32,7 @@ public class ReportsService {
     */
     public void TotalBookingsInSpecificDateRangeByCityOrPostalCode(String city, String postalCode, Date startDate, Date endDate) {
         String sql;
-        if (city != null) {
+        if (postalCode == null) {
             sql = "SELECT city, COUNT(*) as total_bookings " +
                 "FROM Booking B JOIN Listing L ON B.listingId = L.listingId " +
                 "WHERE startDate >= ? AND endDate <= ? AND city = ? " +
@@ -133,21 +133,18 @@ public class ReportsService {
     */
     public void RankHostsByNumberOfListings(String country, String city) {
         String sql;
-        if (country != null && city == null) {
+        if (city == null) {
             sql = "SELECT host_userId, country, COUNT(*) as total_listings, RANK() OVER (ORDER BY COUNT(*) DESC) as rank " +
                   "FROM Listing " +
                   "WHERE country = ? " +
                   "GROUP BY host_userId, country " +
                   "ORDER BY total_listings DESC, host_userId";
-        } else if (country != null && city != null) {
+        } else {
             sql = "SELECT host_userId, country, city, COUNT(*) as total_listings, RANK() OVER (ORDER BY COUNT(*) DESC) as rank " +
                   "FROM Listing " +
                   "WHERE country = ? AND city = ? " +
                   "GROUP BY host_userId, country, city " +
                   "ORDER BY total_listings DESC, host_userId";
-        } else {
-            System.out.println("Invalid input");
-            return;
         }
 
         try {
@@ -270,7 +267,7 @@ public class ReportsService {
         Hosts and renters with the largest number of
         cancellations within a year
     */
-    public void FindMaxCancellations(int year) {
+    public void FindMaxCancellationsForTheYear(int year) {
         String sql = "SELECT * FROM " +
                      "((SELECT L.hostId AS userId, 'host' AS userType, COUNT(*) as total_cancellations " +
                      "FROM Booking B JOIN Listing L ON B.listingId = L.listingId " +
@@ -316,4 +313,6 @@ public class ReportsService {
         say. You do not have to create any visualization as part of this project, only
         report the noun phrases
     */
+    public void FindPopularNounPhrasesFromRenterOnListingComments(){
+    }
 }

@@ -70,14 +70,22 @@ public class CalendarServiceTest {
     }
 
     private static void updateListingAvailability(Scanner scanner, CalendarService calendarService) {
+        int listingId;
+        String availabilityChoice;
+        boolean makeAvailable;
+        String multipleDays;
+        Date startDate;
+        Date endDate;
+        Map<Date, Double> datesPrices;
+
         System.out.println("Enter listingId:");
-        int listingId = scanner.nextInt();
+        listingId = scanner.nextInt();
         scanner.nextLine();
 
         System.out.println("Do you want to make the days available or unavailable? (A:= Available / U:= Unavailable):");
-        String availabilityChoice = scanner.nextLine().trim().toLowerCase();
+        availabilityChoice = scanner.nextLine().trim().toLowerCase();
 
-        boolean makeAvailable = false;
+        makeAvailable = false;
         while(true){
             if (availabilityChoice.equals("a") || availabilityChoice.equals("available")) {
                 makeAvailable = true;
@@ -91,16 +99,16 @@ public class CalendarServiceTest {
         }
 
         System.out.println("Do you want to update multiple days or just one? (Y:= Multiple Days / N:= Just one Day):");
-        String multipleDays = scanner.nextLine().trim().toLowerCase();    
+        multipleDays = scanner.nextLine().trim().toLowerCase();    
 
         if (multipleDays.equals("y") || multipleDays.equals("yes")) {
             System.out.println("Enter start date (yyyy-mm-dd):");
-            Date startDate = Date.valueOf(scanner.nextLine());
+            startDate = Date.valueOf(scanner.nextLine());
 
             System.out.println("Enter end date (yyyy-mm-dd):");
-            Date endDate = Date.valueOf(scanner.nextLine());
+            endDate = Date.valueOf(scanner.nextLine());
 
-            Map<Date, Double> datesPrices = new HashMap<>();
+            datesPrices = new HashMap<>();
             for (LocalDate date = startDate.toLocalDate(); !date.isAfter(endDate.toLocalDate()); date = date.plusDays(1)) {
                 if (makeAvailable){
                     System.out.println("Enter price for date " + date + ":");
@@ -132,8 +140,12 @@ public class CalendarServiceTest {
     }
 
     private static void updateListingPrice(Scanner scanner, CalendarService calendarService) {
+        int listingId;
+        Date startDate;
+        Date endDate;
+
         System.out.println("Enter listingId:");
-        int listingId = scanner.nextInt();
+        listingId = scanner.nextInt();
         scanner.nextLine();  // Consume newline left-over
         
         boolean validInput = false;
@@ -149,8 +161,8 @@ public class CalendarServiceTest {
                 String endDateString = scanner.nextLine();
     
                 try {
-                    Date startDate = Date.valueOf(startDateString);
-                    Date endDate = Date.valueOf(endDateString);
+                    startDate = Date.valueOf(startDateString);
+                    endDate = Date.valueOf(endDateString);
     
                     System.out.println("Enter price:");
                     float price = scanner.nextFloat();
@@ -184,27 +196,35 @@ public class CalendarServiceTest {
     }
 
     private static void checkListingAvailabilityOnDate(Scanner scanner, CalendarService calendarService) {
+        int listingId;
+        Date date;
+
         System.out.println("Enter listingId:");
-        int listingId = scanner.nextInt();
+        listingId = scanner.nextInt();
 
         System.out.println("Enter date (yyyy-mm-dd):");
-        Date date = Date.valueOf(scanner.next());
+        date = Date.valueOf(scanner.next());
 
         System.out.print("\nAvailability for Listing "+ listingId+": \n ---------------------\n");
         calendarService.getAvailabilityStatus(listingId, date);
     }
 
     private static void checkListingAvailabilityBetweenDates(Scanner scanner, CalendarService calendarService) {
+        int listingId;
+        Date startDate;
+        Date endDate;
+        Map<Date, String> dateAvailabilityMap;
+
         System.out.println("Enter listingId:");
-        int listingId = scanner.nextInt();
+        listingId = scanner.nextInt();
 
         System.out.println("Enter start date (yyyy-mm-dd):");
-        Date startDate = Date.valueOf(scanner.next());
+        startDate = Date.valueOf(scanner.next());
 
         System.out.println("Enter end date (yyyy-mm-dd):");
-        Date endDate = Date.valueOf(scanner.next());
+        endDate = Date.valueOf(scanner.next());
 
-        Map<Date, String> dateAvailabilityMap = calendarService.getAvailabilityStatus(listingId, startDate, endDate);
+        dateAvailabilityMap = calendarService.getAvailabilityStatus(listingId, startDate, endDate);
         
         System.out.print("\nAvailability for Listing: "+ listingId+" \n ------------\n");
         for (Map.Entry<Date, String> entry : dateAvailabilityMap.entrySet()) {

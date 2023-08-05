@@ -74,57 +74,52 @@ public class ReviewServiceTest {
         System.out.println("Enter comment:");
         String comment = scanner.nextLine();
 
-        boolean result = reviewService.renterReviewListing(renterUserId, listingId, rating, comment);
-        if (result) {
-            System.out.println("Listing reviewed successfully!");
-        } else {
-            System.out.println("Listing review failed.");
-        }
+        reviewService.renterReviewListing(renterUserId, listingId, rating, comment);
     }
 
     private static void hostReviewRenter(Scanner scanner, ReviewService reviewService) {
+        int hostUserId;
+        int renterUserId;
+        int rating;
+        String comment;
+
         System.out.println("Enter hostUserId:");
-        int hostUserId = scanner.nextInt();
+        hostUserId = scanner.nextInt();
 
         System.out.println("Enter renterUserId:");
-        int renterUserId = scanner.nextInt();
+        renterUserId = scanner.nextInt();
 
         System.out.println("Enter rating (1 to 5):");
-        int rating = scanner.nextInt();
+        rating = scanner.nextInt();
 
         scanner.nextLine(); 
 
         System.out.println("Enter comment:");
-        String comment = scanner.nextLine();
+        comment = scanner.nextLine();
 
-        boolean result = reviewService.hostReviewRenter(hostUserId, renterUserId, rating, comment);
-        if (result) {
-            System.out.println("Renter reviewed successfully!");
-        } else {
-            System.out.println("Renter review failed.");
-        }
+        reviewService.hostReviewRenter(hostUserId, renterUserId, rating, comment);
     }
 
     private static void renterReviewHost(Scanner scanner, ReviewService reviewService) {
+        int renterUserId;
+        int hostUserId;
+        int rating;
+        String comment;
+
         System.out.println("Enter renterUserId:");
-        int renterUserId = scanner.nextInt();
+        renterUserId = scanner.nextInt();
 
         System.out.println("Enter hostUserId:");
-        int hostUserId = scanner.nextInt();
+        hostUserId = scanner.nextInt();
 
         System.out.println("Enter rating (1 to 5):");
-        int rating = scanner.nextInt();
+        rating = scanner.nextInt();
 
         scanner.nextLine();
 
         System.out.println("Enter comment:");
-        String comment = scanner.nextLine();
+        comment = scanner.nextLine();
 
-        boolean result = reviewService.renterReviewHost(renterUserId, hostUserId, rating, comment);
-        if (result) {
-            System.out.println("Host reviewed successfully!");
-        } else {
-            System.out.println("Host review failed.");
-        }
+        reviewService.renterReviewHost(renterUserId, hostUserId, rating, comment);
     }
 }

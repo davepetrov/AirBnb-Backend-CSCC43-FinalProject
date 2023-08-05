@@ -29,7 +29,6 @@ public class UserServiceTest {
 
             System.out.print("\nEnter your choice: ");
             
-
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline left-over
 
@@ -60,59 +59,73 @@ public class UserServiceTest {
     }
 
     private static void createUser(Scanner scanner, UserService userService) {
+        String firstname;
+        String surname;
+        Date dob;
+        String occupation;
+        String sin;
+        String postalCode;
+        String city;
+        String country;
+        String creditcard;
+
         System.out.println("Enter firstname:");
-        String firstname = scanner.nextLine();
+        firstname = scanner.nextLine();
 
         System.out.println("Enter lastname:");
-        String surname = scanner.nextLine();
+        surname = scanner.nextLine();
 
         System.out.println("Enter date of birth (yyyy-mm-dd):");
-        Date dob = Date.valueOf(scanner.nextLine());
+        dob = Date.valueOf(scanner.nextLine());
 
         System.out.println("Enter occupation:");
-        String occupation = scanner.nextLine();
+        occupation = scanner.nextLine();
 
         System.out.println("Enter SIN:");
-        String sin = scanner.nextLine();
+        sin = scanner.nextLine();
 
         System.out.println("Enter postalcode:");
-        String postalCode = scanner.nextLine();
+        postalCode = scanner.nextLine();
 
-        System.out.println("Enter city:");
-        String city = scanner.nextLine();
+        System.out.println("Enter City:");
+        city = scanner.nextLine();
 
-        System.out.println("Enter country:");
-        String country = scanner.nextLine();
+        System.out.println("Enter Country:");
+        country = scanner.nextLine();
 
-        System.out.println("Enter creditcard (N/A if not applicable):");
-        String creditcard = scanner.nextLine();
-        creditcard = creditcard.equals("N/A") ? null : creditcard;
+        System.out.println("Enter Creditcard # (or leave empty if you dont want to add right now. ** Note **: Must have Creditcard added to rent):");
+        creditcard = scanner.nextLine();
+        if (creditcard.isEmpty()) {
+            creditcard = null;
+        }
 
         userService.createUser(firstname, surname, dob, occupation, sin, postalCode, city, country, creditcard);
     }
 
     private static void deleteUser(Scanner scanner, UserService userService) {
+        int userId;
+
         System.out.println("Enter userId:");
-        int userId = scanner.nextInt();
+        userId = scanner.nextInt();
         scanner.nextLine();
 
-        boolean result = userService.deleteUser(userId);
-        if (result) {
-            System.out.println("User deleted successfully!");
-        } else {
-            System.out.println("User deletion failed.");
-        }
+        userService.deleteUser(userId);
     }
 
     private static void updateCreditCard(Scanner scanner, UserService userService) {
+        int userId;
+        String creditcard;
+
         System.out.println("Enter userId:");
-        int userId = scanner.nextInt();
+        userId = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.println("Enter new creditcard (If want to empty, type N/A):");
-        String creditcard = scanner.nextLine();
+        System.out.println("Enter Creditcard # (or leave empty if you want to remove):");
+        creditcard = scanner.nextLine();
+        if (creditcard.isEmpty()) {
+            creditcard = null;
+        }
 
-        creditcard = creditcard.equals("N/A") ? null : creditcard;
         userService.updateCreditcard(userId, creditcard);
     }
 
