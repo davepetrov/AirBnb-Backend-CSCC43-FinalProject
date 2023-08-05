@@ -20,13 +20,11 @@ public class Booking {
     
     @Override
     public String toString() {
-        String bookingString = "Booking ID: " + bookingId + "\n"
-            + "Listing ID: " + listingId + "\n"
-            + "Renter User ID: " + renter_userId + "\n";
+        String bookingString = "Booking ID: " + bookingId 
+            + ", Listing ID: " + listingId
+            + ", Renter User ID: " + renter_userId;
         if (cancelledBy != null) {
-            System.out.println("Cancelled By: " + cancelledBy);
-            System.out.println("Cancelled By: " + cancelledBy.name());
-            bookingString += "Cancelled By: " + cancelledBy.name() + "\n";
+            bookingString += ", Cancelled By: " + cancelledBy.name() ;
         }
         return bookingString;
     }

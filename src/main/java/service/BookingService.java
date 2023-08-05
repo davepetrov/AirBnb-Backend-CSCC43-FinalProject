@@ -48,10 +48,10 @@ public class BookingService {
             int result = callableStatement.getInt(5);  // Get the value of the OUT parameter
     
             if (result == 1) {
-                System.out.println("\nSuccessfully created a booking and updated Calendar!");
+                System.out.println("\nSuccessfully created a booking and updated Calendar! Your CreditCard has been charged (not acc)");
                 return true;
             } else {
-                System.out.println("\nFAILED to create a booking! At least one of the days is unavailable.");
+                System.out.println("\n[FAILED to create a booking!] At least one of the days is unavailable.");
                 return false;
             }
         } catch (SQLException e) {
@@ -80,12 +80,15 @@ public class BookingService {
         
         // Find the booking with bookingId and set cancelledBy (meaning cancelled)
         try {
-            String sql = "UPDATE Booking SET cancelledBy = ? WHERE bookingId = ?";
+            String sql = "UPDATE Booking SET cancelledBy = ? WHERE bookingId = ? AND cancelledBy IS NULL";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, cancelledBy.name());
             stmt.setInt(2, bookingId);
-            stmt.executeUpdate();
-
+            int affected = stmt.executeUpdate();
+            if (affected == 0) {
+                System.out.println("Booking ID not found OR booking is already cancelled!");
+                return false;
+            }
         } catch (Exception e) {
             System.out.println("[Cancel Booking Failed] " + e.getMessage());
             return false;

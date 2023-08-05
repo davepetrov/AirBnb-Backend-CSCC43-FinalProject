@@ -74,16 +74,16 @@ public class BookingServiceTest {
         Date startDate;
         Date endDate;
 
-        System.out.println("Enter listingId (Required):");
+        System.out.println("\nEnter listingId (Required):");
         listingId = scanner.nextInt();
 
-        System.out.println("Enter renterId (Required):");
+        System.out.println("\nEnter renterId (Required):");
         renterId = scanner.nextInt();
 
-        System.out.println("Enter start date (yyyy-mm-dd)(Required):");
+        System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
         startDate = Date.valueOf(scanner.next());
 
-        System.out.println("Enter end date (yyyy-mm-dd)(Required):");
+        System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
         endDate = Date.valueOf(scanner.next());
 
         bookingService.createBooking(listingId, renterId, startDate, endDate);
@@ -91,7 +91,7 @@ public class BookingServiceTest {
 
     private static void cancelBooking(Scanner scanner, BookingService bookingService, UserType userType) {
         int bookingId;
-        System.out.println("Enter bookingId (Required):");
+        System.out.println("\nEnter bookingId (Required):");
         bookingId = scanner.nextInt();
 
         if (userType == UserType.Host) {
@@ -103,25 +103,14 @@ public class BookingServiceTest {
     }
 
     private static void getBookingsByListingId(Scanner scanner, BookingService bookingService) {
-        System.out.println("Enter listingId:");
+        System.out.println("\nEnter listingId:");
         int listingId = scanner.nextInt();
 
         List<Booking> bookings = bookingService.getBookingsByListingId(listingId);
         if (bookings != null && !bookings.isEmpty()) {
             System.out.println("\nBookings for Listing ID " + listingId + "\n--------------------------------------------------------------------------");
             for (Booking booking : bookings) {
-                if (booking.getCancelledBy() != null) {
-                    System.out.println("Booking ID: " + booking.getBookingId() +
-                            ", Renter ID: " + booking.getRenter_userId() +
-                            ", startDate: " + booking.getStartDate().toString() +
-                            ", endDate: " + booking.getEndDate().toString()+
-                            ", Cancelled By: " + booking.getCancelledBy());
-                } else {
-                     System.out.println("Booking ID: " + booking.getBookingId() +
-                            ", Renter ID: " + booking.getRenter_userId() +
-                            ", startDate: " + booking.getStartDate().toString() +
-                            ", endDate: " + booking.getEndDate().toString());
-                }
+                System.out.println(booking.toString() +"\n");
                     
             }
         } else {

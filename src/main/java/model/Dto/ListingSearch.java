@@ -2,9 +2,12 @@ package model.Dto;
 
 import java.sql.Date;
 
+import com.mysql.cj.util.Util;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import service.Utils;
 
 @Data
 @AllArgsConstructor
@@ -26,6 +29,7 @@ public class ListingSearch {
     // to string
     @Override
     public String toString() {
+        Utils utils = new Utils();
         String listingString = "Listing ID: " + listingId
             + ", Host Name: " + hostName 
             + ", Location Lat: " + locationLat 
@@ -40,17 +44,9 @@ public class ListingSearch {
             listingString += ", Date: " + availabilityDate ;
         }
         if (distanceFromSearch != null) {
-            listingString += ", Distance(km): " + round(distanceFromSearch,2);
+            listingString += ", Distance(km): " + utils.round(distanceFromSearch,2);
         }
         return listingString;
     }
-
-    private static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
     
-        long factor = (long) Math.pow(10, places);
-        value = value * factor;
-        long tmp = Math.round(value);
-        return (double) tmp / factor;
-    }
 }

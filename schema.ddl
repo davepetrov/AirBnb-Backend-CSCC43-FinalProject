@@ -1,3 +1,4 @@
+
 -------------------------ENTITIES-------------------------
 CREATE TABLE BNBUser (
     userId INT NOT NULL AUTO_INCREMENT,
@@ -10,6 +11,7 @@ CREATE TABLE BNBUser (
     city VARCHAR(255),
     country VARCHAR(255),
     creditcard VARCHAR(255) DEFAULT NULL,
+
     PRIMARY KEY (userId)
 );
 
@@ -23,17 +25,19 @@ CREATE TABLE Listing (
     city VARCHAR(255),
     country VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    -- trigger
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
     PRIMARY KEY (listingId),
-    FOREIGN KEY (host_userId) REFERENCES BNBUser (userId) ON DELETE
-    SET
-        NULL ON UPDATE CASCADE
+    FOREIGN KEY (host_userId) REFERENCES BNBUser (userId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 CREATE TABLE Amenities (
     amenityId INT NOT NULL,
     amenityName VARCHAR(255) UNIQUE,
+
     PRIMARY KEY(amenityId)
 );
 
@@ -45,15 +49,16 @@ CREATE TABLE Booking (
     startDate DATE,
     endDate DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    -- trigger
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                   ON UPDATE CURRENT_TIMESTAMP,
+
     PRIMARY KEY (bookingId),
-    FOREIGN KEY (listingId) REFERENCES Listing (listingId) ON DELETE
-    SET
-        NULL ON UPDATE CASCADE,
-        FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId) ON DELETE
-    SET
-        NULL ON UPDATE CASCADE
+    FOREIGN KEY (listingId) REFERENCES Listing (listingId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
+        ON DELETE SET NULL 
+        ON UPDATE CASCADE
 );
 
 CREATE TABLE Calendar (
@@ -62,76 +67,91 @@ CREATE TABLE Calendar (
     availabilityDate DATE,
     price DECIMAL(10, 2),
     isAvailable BOOLEAN,
+
     PRIMARY KEY (listingId, availabilityDate),
-    FOREIGN KEY (listingId) REFERENCES Listing (listingId) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (bookingId) REFERENCES Booking (bookingId) ON DELETE CASCADE ON UPDATE
-    SET
-        NULL
+    FOREIGN KEY (listingId) REFERENCES Listing (listingId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (bookingId) REFERENCES Booking (bookingId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 -------------------------RELATIONS-------------------------
+
 CREATE TABLE Listing_Offers_Amenities (
     listingId INT,
     amenityId INT,
     PRIMARY KEY (listingId, amenityId),
-    FOREIGN KEY (listingId) REFERENCES Listing (listingId) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (amenityId) REFERENCES Amenities (amenityId) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (listingId) REFERENCES Listing (listingId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (amenityId) REFERENCES Amenities (amenityId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 CREATE TABLE Host_Review_Renter (
-    hostUserId INT,
-    renterUserId INT,
+    host_userId INT,
+    renter_userId INT,
     comment TEXT,
     rating INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    -- trigger
-    PRIMARY KEY (hostUserId, renterUserId),
-    FOREIGN KEY (hostUserId) REFERENCES BNBUser (userId) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (hostUserId) REFERENCES BNBUser (userId) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT CheckRating1 CHECK (
-        rating BETWEEN 1
-        and 5
-    )
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                ON UPDATE CURRENT_TIMESTAMP, -- trigger
+
+    PRIMARY KEY (host_userId, renter_userId),
+    FOREIGN KEY (host_userId) REFERENCES BNBUser (userId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (host_userId) REFERENCES BNBUser (userId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT CheckRating1 CHECK (rating BETWEEN 1 and 5)
 );
 
 CREATE TABLE Renter_Review_Host (
-    renterUserId INT,
-    hostUserId INT,
+    renter_userId INT,
+    host_userId INT,
     comment TEXT,
     rating INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    -- trigger
-    PRIMARY KEY (renterUserId, hostUserId),
-    FOREIGN KEY (renterUserId) REFERENCES BNBUser (userId) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (hostUserId) REFERENCES BNBUser (userId) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT CheckRating2 CHECK (
-        rating BETWEEN 1
-        and 5
-    )
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                   ON UPDATE CURRENT_TIMESTAMP, -- trigger
+    PRIMARY KEY (renter_userId, host_userId),
+    FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (host_userId) REFERENCES BNBUser (userId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT CheckRating2 CHECK (rating BETWEEN 1 and 5)
 );
 
 CREATE TABLE Renter_Review_Listing (
-    renterUserId INT,
+    renter_userId INT,
     listingId INT,
     comment TEXT,
     rating INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    -- trigger
-    PRIMARY KEY (renterUserId, listingId),
-    FOREIGN KEY (renterUserId) REFERENCES BNBUser (userId) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (listingId) REFERENCES Listing (listingId) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT CheckRating3 CHECK (
-        rating BETWEEN 1
-        and 5
-    )
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                   ON UPDATE CURRENT_TIMESTAMP, -- trigger
+
+    PRIMARY KEY (renter_userId, listingId),
+    FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (listingId) REFERENCES Listing (listingId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT CheckRating3 CHECK (rating BETWEEN 1 and 5)
 );
 
--------------------------PROCEDURES / TRIGGERS-------------------------
+-------------------------PROCEDURES-------------------------
 -- When a booking takes place, update unavailability in Calendar
-DELIMITER $ $ CREATE PROCEDURE CreateBookingAndUpdateCalendar(
+DELIMITER $$ CREATE PROCEDURE CreateBookingAndUpdateCalendar(
     IN p_listingId INT,
     IN p_renterId INT,
     IN p_startDate DATE,
@@ -148,8 +168,7 @@ FROM
     Calendar
 WHERE
     listingId = p_listingId
-    AND availabilityDate BETWEEN p_startDate
-    AND p_endDate
+    AND availabilityDate BETWEEN p_startDate AND p_endDate
     AND isAvailable = TRUE;
 
 -- If all the dates are available (v_available equals the number of days in the booking),
@@ -196,10 +215,14 @@ SET
 
 END IF;
 
-END $ $ DELIMITER;
+END 
+$$ DELIMITER;
 
--- When a cancellation takes place, update unavailability in Calendar
-DELIMITER $ $ CREATE TRIGGER UpdateAvailabilityOnCancelTrigger
+-------------------------TRIGGERS-------------------------
+
+-- 1. Trigger for When a cancellation takes place, update unavailability in Calendar
+DELIMITER $$ 
+CREATE TRIGGER UpdateAvailabilityOnCancelTrigger
 AFTER
 UPDATE
     ON Booking FOR EACH ROW BEGIN IF NEW.cancelledBy IS NOT NULL THEN
@@ -216,11 +239,12 @@ WHERE
 END IF;
 
 END;
+$$ DELIMITER;
 
-$ $ DELIMITER;
+-- 2. Trigger for When a UNDO cancellation takes place, update unavailability in Calendar
+DELIMITER $$ 
 
--- When a UNDO cancellation takes place, update unavailability in Calendar
-DELIMITER $ $ CREATE TRIGGER UpdateAvailabilityOnUNDOCancelTrigger
+CREATE TRIGGER UpdateAvailabilityOnUNDOCancelTrigger
 AFTER
 UPDATE
     ON Booking FOR EACH ROW BEGIN IF NEW.cancelledBy IS NULL THEN
@@ -238,10 +262,11 @@ END IF;
 
 END;
 
-$ $ DELIMITER;
+$$ DELIMITER;
 
--- Trigger for when a listing is deleted, Cancel all future bookings (By Host)
-DELIMITER $ $ CREATE TRIGGER CancelFutureBookingsOnListingDeletionTrigger
+-- 3. Trigger for when a listing is deleted, Cancel all future bookings (By Host)
+DELIMITER $$ 
+CREATE TRIGGER CancelFutureBookingsOnListingDeletionTrigger
 AFTER
     DELETE ON Listing FOR EACH ROW BEGIN
 UPDATE
@@ -253,8 +278,59 @@ WHERE
     AND startDate > CURDATE();
 
 END;
+$$ DELIMITER
 
-$ $ DELIMITER;
+
+-- 4. Trigger when a user is deleted, delete all listings
+DELIMITER $$ 
+CREATE TRIGGER DeleteListingsOnUserDeletionTrigger
+AFTER
+    DELETE ON BNBUser FOR EACH ROW BEGIN
+
+DELETE FROM
+    Listing
+WHERE
+    host_userId = OLD.userId;
+END;
+
+$$ DELIMITER;
+
+-- 5. Trigger when a listing is delete, delete all reviews for the listing
+DELIMITER $$ 
+CREATE TRIGGER DeleteReviewsOnListingDeletionTrigger
+AFTER
+    DELETE ON Listing FOR EACH ROW BEGIN
+
+DELETE FROM
+    Renter_Review_Listing
+WHERE
+    listingId = OLD.listingId;
+END;
+
+$$ DELIMITER;
+
+-- 6. Trigger when a user is deleted, delete all reviews for the user
+DELIMITER $$ 
+CREATE TRIGGER DeleteReviewsOnUserDeletionTrigger
+AFTER
+    DELETE ON BNBUser FOR EACH ROW BEGIN
+
+DELETE FROM
+    Host_Review_Renter
+WHERE
+    host_userId = OLD.userId OR renter_userId = OLD.userId;
+
+DELETE FROM
+    Renter_Review_Host
+WHERE
+    host_userId = OLD.userId OR renter_userId = old.userId;
+
+DELETE FROM
+    Renter_Review_Listing
+WHERE
+    renter_userId = OLD.userId;
+END;
+$$ DELIMITER;
 
 -------------------------CONFIGS-------------------------
 INSERT INTO

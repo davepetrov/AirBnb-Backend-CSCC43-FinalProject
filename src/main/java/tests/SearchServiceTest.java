@@ -81,10 +81,10 @@ public class SearchServiceTest {
 
             if (input.equals("y") || input.equals("yes")) {
 
-                System.out.println("Enter start date (yyyy-MM-dd):");
+                System.out.println("\nEnter start date (yyyy-MM-dd):");
                 startDate = Date.valueOf(scanner.nextLine());
 
-                System.out.println("Enter end date (yyyy-MM-dd):");
+                System.out.println("\nEnter end date (yyyy-MM-dd):");
                 endDate = Date.valueOf(scanner.nextLine());
 
                 break;
@@ -95,13 +95,13 @@ public class SearchServiceTest {
             }
         }
 
-        System.out.println("Enter latitude:");
+        System.out.println("\nEnter latitude:");
         latitude = scanner.nextDouble();
 
-        System.out.println("Enter longitude:");
+        System.out.println("\nEnter longitude:");
         longitude = scanner.nextDouble();
 
-        System.out.println("Enter radius in kilometers (Default: 10, type -1):");
+        System.out.println("\nEnter radius in kilometers (Default: 10, type -1):");
         radiusKm = scanner.nextInt();
 
         System.out.println("Sort by price or distance? (P/D)");
@@ -153,10 +153,10 @@ public class SearchServiceTest {
 
             if (input.equals("y") || input.equals("yes")) {
 
-                System.out.println("Enter start date (yyyy-MM-dd):");
+                System.out.println("\nEnter start date (yyyy-MM-dd):");
                 startDate = Date.valueOf(scanner.nextLine());
 
-                System.out.println("Enter end date (yyyy-MM-dd):");
+                System.out.println("\nEnter end date (yyyy-MM-dd):");
                 endDate = Date.valueOf(scanner.nextLine());
 
                 break;
@@ -166,13 +166,13 @@ public class SearchServiceTest {
                 System.out.println("Invalid input. Please enter 'Y' or 'N'.");
             }
         }
-        System.out.println("Enter Postal code:");
+        System.out.println("\nEnter Postal code:");
         postalCode = scanner.nextLine();
 
-        System.out.println("Enter City:");
+        System.out.println("\nEnter City:");
         city = scanner.nextLine();
 
-        System.out.println("Enter Country:");
+        System.out.println("\nEnter Country:");
         country = scanner.nextLine();
 
         List<ListingSearch> results = searchService.findAvailableListingSearchByExactAddress(startDate, endDate, postalCode, city, country);
@@ -196,10 +196,10 @@ public class SearchServiceTest {
 
             if (input.equals("y") || input.equals("yes")) {
 
-                System.out.println("Enter start date (yyyy-MM-dd):");
+                System.out.println("\nEnter start date (yyyy-MM-dd):");
                 startDate = Date.valueOf(scanner.nextLine());
 
-                System.out.println("Enter end date (yyyy-MM-dd):");
+                System.out.println("\nEnter end date (yyyy-MM-dd):");
                 endDate = Date.valueOf(scanner.nextLine());
 
                 break;
@@ -210,12 +210,13 @@ public class SearchServiceTest {
             }
         }
 
-        System.out.println("Enter postal code (or leave empty for any):");
+        System.out.println("\nEnter postal code (or leave empty for any):");
         postalCode = scanner.nextLine();
         amenities = new ArrayList<>();
+        
         System.out.println("\nAll possible Amenities\n--------------------------\n" + utils.getAllAmenities());
         while (true) {
-            System.out.println("\nEnter amenities separated by commas and first letter capitalized\n(e.g., Wifi,Smoke alarm,Carbon monoxide alarm) (or leave empty for any):");
+            System.out.println("\nEnter amenities separated by commas and first letter capitalized\n(e.g. Wifi,Smoke alarm,Carbon monoxide alarm) (or leave empty for any):");
 
             String amenitiesInput = scanner.nextLine();
             String[] amenitiesArray = amenitiesInput.split(",");
@@ -240,13 +241,13 @@ public class SearchServiceTest {
             }
         }
 
-        System.out.println("Enter minimum price (or leave empty for any):");
+        System.out.println("\nEnter minimum price (or leave empty for any):");
         String minPriceStr = scanner.nextLine();
         if (!minPriceStr.isEmpty()) {
             minPrice = Double.parseDouble(minPriceStr);
         }
 
-        System.out.println("Enter maximum price (or leave empty for any):");
+        System.out.println("\nEnter maximum price (or leave empty for any):");
         String maxPriceStr = scanner.nextLine();
         if (!maxPriceStr.isEmpty()) {
             maxPrice = Double.parseDouble(maxPriceStr);

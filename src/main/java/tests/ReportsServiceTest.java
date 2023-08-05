@@ -74,16 +74,16 @@ public class ReportsServiceTest {
         Date startDate;
         Date endDate;
 
-        System.out.println("Enter cCity (Required):");
+        System.out.println("\nEnter cCity (Required):");
         city = scanner.nextLine();
 
-        System.out.println("Enter postal code (or leave empty for any):");
+        System.out.println("\nEnter postal code (or leave empty for any):");
         postalCode = scanner.nextLine();
 
-        System.out.println("Enter start date (YYYY-MM-DD)(Required):");
+        System.out.println("\nEnter start date (YYYY-MM-DD)(Required):");
         startDate = Date.valueOf(scanner.nextLine());
 
-        System.out.println("Enter end date (YYYY-MM-DD)(Required):");
+        System.out.println("\nEnter end date (YYYY-MM-DD)(Required):");
         endDate = Date.valueOf(scanner.nextLine());
         
         reportsService.TotalBookingsInSpecificDateRangeByCityOrPostalCode(city, postalCode, startDate, endDate);
@@ -95,13 +95,13 @@ public class ReportsServiceTest {
         String city = null;
         String postalCode = null;
 
-        System.out.println("Enter Country (Required):");
+        System.out.println("\nEnter Country (Required):");
         country = scanner.nextLine();
 
-        System.out.println("Enter City (or leave empty for any):");
+        System.out.println("\nEnter City (or leave empty for any):");
         city = scanner.nextLine();
 
-        System.out.println("Enter Postal code (or leave empty for any):");
+        System.out.println("\nEnter Postal code (or leave empty for any):");
         postalCode = scanner.nextLine();
 
         reportsService.TotalNumberOfListings(country, city, postalCode);
@@ -113,10 +113,10 @@ public class ReportsServiceTest {
         String country;
         String city;
 
-        System.out.println("Enter Country (Required):");
+        System.out.println("\nEnter Country (Required):");
         country = scanner.nextLine();
 
-        System.out.println("Enter city (or leave empty for any):");
+        System.out.println("\nEnter city (or leave empty for any):");
         city = scanner.nextLine();
 
         reportsService.RankHostsByNumberOfListings(country, city);
@@ -133,13 +133,13 @@ public class ReportsServiceTest {
         Date endDate;
         int year;
 
-        System.out.println("Enter start date (YYYY-MM-DD)(Required):");
+        System.out.println("\nEnter start date (YYYY-MM-DD)(Required):");
         startDate = Date.valueOf(scanner.nextLine());
 
-        System.out.println("Enter end date (YYYY-MM-DD)(Required):");
+        System.out.println("\nEnter end date (YYYY-MM-DD)(Required):");
         endDate = Date.valueOf(scanner.nextLine());
 
-        System.out.println("Enter the year (Required):");
+        System.out.println("\nEnter the year (Required):");
         year = scanner.nextInt();
         scanner.nextLine();
 
@@ -150,7 +150,7 @@ public class ReportsServiceTest {
         System.out.println("Generate Report 6");
         int year;
 
-        System.out.println("Enter the year (Required):");
+        System.out.println("\nEnter the year (Required):");
         year = scanner.nextInt();
         scanner.nextLine(); 
 

@@ -40,10 +40,10 @@ public class UserService {
             stmt.setString(9, creditcard);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("[User Creation Failed] " + e.getMessage());
+            System.out.println("\n[User Creation Failed] " + e.getMessage());
             return false;
         }
-        System.out.println("Successfully created a user!\n");
+        System.out.println("\nSuccessfully created a user!");
         return true;
         
     }
@@ -54,11 +54,16 @@ public class UserService {
             String sql = "DELETE FROM BNBUser WHERE userId = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
-            stmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                System.out.println("\nUser does not exist.");
+            }
+            else{
+                System.out.println("\nSuccessfully deleted user!");
+            }
         } catch (SQLException e) {
             System.out.println("[User Deletion Failed] " + e.getMessage());
         }
-        System.out.println("Successfully deleted a user!\n");
     }
 
     public void updateCreditcard(int userId, String creditcard) {
@@ -79,22 +84,26 @@ public class UserService {
     public void isRenter(int userId) {
         // check if user has creditcard field not null, return 
         try {
-            String sql = "SELECT creditcard FROM BNBUser WHERE userId = ?";
+            String sql = "SELECT userId, creditcard FROM BNBUser WHERE userId = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()){
                 if (rs.getString("creditcard")==null || rs.getString("creditcard").isEmpty()) {
-                    System.out.println("User is not a renter\n");
+                    System.out.println("\nUser is NOT eligible to be a renter (Their Creditcard # is not setup)");
                     return;
                 }
+                else{
+                    System.out.println("\nUser is eligible to be a renter (Their Creditcard # is setup)");
+                }
             }
-            System.out.println("User is a renter\n");
+            else{
+                System.out.println("\nUser does not exist.");
+            }
 
         } catch (SQLException e) {
             System.out.println("[isRenter Query Failed] " + e.getMessage());
-            return;
         }        
     }
 

@@ -242,4 +242,112 @@ public class CalendarService {
             System.out.println("[Update Listing Availability Failed] " + e.getMessage());
         }
     }
+
+    public Boolean isFirstTimeHost(int listingId) {
+        String query = "SELECT COUNT(b.bookingId) as booking_count " +
+                       "FROM Listing l LEFT JOIN Booking b ON l.listingId = b.listingId " +
+                       "WHERE l.listingId = ? " +
+                       "GROUP BY l.host_userId";
+        try {
+            // Prepare and execute the SQL
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, listingId);
+            ResultSet rs = stmt.executeQuery();
+    
+            if (!rs.next()) {
+                System.out.println("[isFirstTimeHost Failed] Listing with id " + listingId + " does not exist.");
+                return null;
+            }
+    
+            // If the count is 0, this is a first-time host
+            return rs.getInt("booking_count") == 0;
+        } catch (SQLException e) {
+            System.out.println("[isFirstTimeHost Failed] " + e.getMessage());
+            return null;
+        }
+    }
+
+    // public Double getRecommendedPrice(int listingId) {
+    //     // Get the city and country for the listingId
+    //     String cityCountryQuery = "SELECT city, country FROM Listing WHERE listingId = ?";
+    //     String city = null;
+    //     String country = null;
+    //     try {
+    //         PreparedStatement stmt = conn.prepareStatement(cityCountryQuery);
+    //         stmt.setInt(1, listingId);
+    //         ResultSet rs = stmt.executeQuery();
+    //         if (rs.next()) {
+    //             city = rs.getString("city");
+    //             country = rs.getString("country");
+    //         } else {
+    //             throw new IllegalArgumentException("Listing with id " + listingId + " does not exist.");
+    //         }
+    //     } catch (SQLException e) {
+    //         throw new RuntimeException("Error getting city and country.", e);
+    //     }
+    
+    //     // Query templates
+    //     String cityQuery = "SELECT AVG(c.price) as avg_price " +
+    //                        "FROM Listing l JOIN Calendar c ON l.listingId = c.listingId " +
+    //                        "WHERE l.city = ?";
+    //     String countryQuery = "SELECT AVG(c.price) as avg_price " +
+    //                           "FROM Listing l JOIN Calendar c ON l.listingId = c.listingId " +
+    //                           "WHERE l.country = ?";
+    //     String overallQuery = "SELECT AVG(c.price) as avg_price " +
+    //                           "FROM Calendar c";
+    
+    //     // Try to get average price by city
+    //     Double avgPrice = getAveragePrice(cityQuery, city);
+    //     if (avgPrice != null) return avgPrice;
+    
+    //     // If not found, try to get average price by country
+    //     avgPrice = getAveragePrice(countryQuery, country);
+    //     if (avgPrice != null) return avgPrice;
+    
+    //     // If still not found, get overall average price
+    //     avgPrice = getAveragePrice(overallQuery, null);
+    //     if (avgPrice != null) return avgPrice;
+    
+    //     throw new RuntimeException("Unable to calculate recommended price.");
+    // }
+    
+    // private Double getAveragePrice(String query, String param) {
+    //     try {
+    //         PreparedStatement stmt = conn.prepareStatement(query);
+    //         if (param != null) stmt.setString(1, param);
+    //         ResultSet rs = stmt.executeQuery();
+    //         if (rs.next()) {
+    //             return rs.getDouble("avg_price");
+    //         } else {
+    //             return null;
+    //         }
+    //     } catch (SQLException e) {
+    //         throw new RuntimeException("Error calculating average price.", e);
+    //     }
+    // }
+
+    // COALESCE: Attempt to find the average price based on city, country, in that order, and will return the first non-null value:
+    public Double getRecommendedPrice(int listingId) {
+        String query = "SELECT COALESCE(" +
+                        "    (SELECT AVG(c1.price) FROM Listing l1 JOIN Calendar c1 ON l1.listingId = c1.listingId WHERE l1.city = l.city AND l1.country = l.country AND c1.price IS NOT NULL)," +
+                        "    (SELECT AVG(c2.price) FROM Listing l2 JOIN Calendar c2 ON l2.listingId = c2.listingId WHERE l2.country = l.country AND c2.price IS NOT NULL)" +
+                        ") as avg_price " +
+                        "FROM Listing l " +
+                        "WHERE l.listingId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, listingId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("avg_price");
+                } else {
+                    System.out.println("[getRecommendedPrice Failed] Listing with id " + listingId + " does not exist.");
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("[getRecommendedPrice Failed]"+ e);
+            return null;
+        }
+    }
 }
+

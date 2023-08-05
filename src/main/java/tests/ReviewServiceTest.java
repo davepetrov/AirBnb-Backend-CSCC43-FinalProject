@@ -60,19 +60,22 @@ public class ReviewServiceTest {
     }
 
     private static void renterReviewListing(Scanner scanner, ReviewService reviewService) {
-        System.out.println("Enter renterUserId:");
+        System.out.println("\nEnter renterUserId:");
         int renterUserId = scanner.nextInt();
 
-        System.out.println("Enter listingId:");
+        System.out.println("\nEnter listingId:");
         int listingId = scanner.nextInt();
 
-        System.out.println("Enter rating (1 to 5):");
+        System.out.println("\nEnter rating (1 to 5):");
         int rating = scanner.nextInt();
 
         scanner.nextLine();
 
-        System.out.println("Enter comment:");
+        System.out.println("\nEnter comment (Could be empty):");
         String comment = scanner.nextLine();
+        if (comment.isEmpty()){
+            comment = null;
+        }
 
         reviewService.renterReviewListing(renterUserId, listingId, rating, comment);
     }
@@ -83,19 +86,22 @@ public class ReviewServiceTest {
         int rating;
         String comment;
 
-        System.out.println("Enter hostUserId:");
+        System.out.println("\nEnter hostUserId:");
         hostUserId = scanner.nextInt();
 
-        System.out.println("Enter renterUserId:");
+        System.out.println("\nEnter renterUserId:");
         renterUserId = scanner.nextInt();
 
-        System.out.println("Enter rating (1 to 5):");
+        System.out.println("\nEnter rating (1 to 5):");
         rating = scanner.nextInt();
 
         scanner.nextLine(); 
 
-        System.out.println("Enter comment:");
+        System.out.println("\nEnter comment (Could be empty):");
         comment = scanner.nextLine();
+        if (comment.isEmpty()){
+            comment = null;
+        }
 
         reviewService.hostReviewRenter(hostUserId, renterUserId, rating, comment);
     }
@@ -106,19 +112,22 @@ public class ReviewServiceTest {
         int rating;
         String comment;
 
-        System.out.println("Enter renterUserId:");
+        System.out.println("\nEnter renterUserId:");
         renterUserId = scanner.nextInt();
 
-        System.out.println("Enter hostUserId:");
+        System.out.println("\nEnter hostUserId:");
         hostUserId = scanner.nextInt();
 
-        System.out.println("Enter rating (1 to 5):");
+        System.out.println("\nEnter rating (1 to 5):");
         rating = scanner.nextInt();
 
         scanner.nextLine();
 
-        System.out.println("Enter comment:");
+        System.out.println("\nEnter comment (Could be empty):");
         comment = scanner.nextLine();
+        if (comment.isEmpty()){
+            comment = null;
+        }
 
         reviewService.renterReviewHost(renterUserId, hostUserId, rating, comment);
     }

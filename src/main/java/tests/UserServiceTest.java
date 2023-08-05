@@ -69,31 +69,38 @@ public class UserServiceTest {
         String country;
         String creditcard;
 
-        System.out.println("Enter firstname:");
+        System.out.println("\nEnter firstname:");
         firstname = scanner.nextLine();
 
-        System.out.println("Enter lastname:");
+        System.out.println("\nEnter lastname:");
         surname = scanner.nextLine();
 
-        System.out.println("Enter date of birth (yyyy-mm-dd):");
-        dob = Date.valueOf(scanner.nextLine());
+        System.out.println("\nEnter date of birth (yyyy-mm-dd):");
 
-        System.out.println("Enter occupation:");
+        while (true){
+            dob = Date.valueOf(scanner.nextLine());
+            if (dob.toLocalDate().isBefore(java.time.LocalDate.now().minusYears(18))) {
+                break;
+            }
+            System.out.println("Must be 18+ to use this service. Please enter a valid date of birth:");
+        }
+
+        System.out.println("\nEnter occupation:");
         occupation = scanner.nextLine();
 
-        System.out.println("Enter SIN:");
+        System.out.println("\nEnter SIN:");
         sin = scanner.nextLine();
 
-        System.out.println("Enter postalcode:");
+        System.out.println("\nEnter postalcode:");
         postalCode = scanner.nextLine();
 
-        System.out.println("Enter City:");
+        System.out.println("\nEnter City:");
         city = scanner.nextLine();
 
-        System.out.println("Enter Country:");
+        System.out.println("\nEnter Country:");
         country = scanner.nextLine();
 
-        System.out.println("Enter Creditcard # (or leave empty if you dont want to add right now. ** Note **: Must have Creditcard added to rent):");
+        System.out.println("\nEnter Creditcard # (or leave empty if you dont want to add right now. ** Note **: Must have Creditcard added to rent):");
         creditcard = scanner.nextLine();
         if (creditcard.isEmpty()) {
             creditcard = null;
@@ -105,7 +112,7 @@ public class UserServiceTest {
     private static void deleteUser(Scanner scanner, UserService userService) {
         int userId;
 
-        System.out.println("Enter userId:");
+        System.out.println("\nEnter userId:");
         userId = scanner.nextInt();
         scanner.nextLine();
 
@@ -116,11 +123,11 @@ public class UserServiceTest {
         int userId;
         String creditcard;
 
-        System.out.println("Enter userId:");
+        System.out.println("\nEnter userId:");
         userId = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.println("Enter Creditcard # (or leave empty if you want to remove):");
+        System.out.println("\nEnter Creditcard # (or leave empty if you want to remove):");
         creditcard = scanner.nextLine();
         if (creditcard.isEmpty()) {
             creditcard = null;
@@ -130,7 +137,7 @@ public class UserServiceTest {
     }
 
     private static void isRenter(Scanner scanner, UserService userService) {
-        System.out.println("Enter userId:");
+        System.out.println("\nEnter userId:");
         int userId = scanner.nextInt();
         scanner.nextLine();
 

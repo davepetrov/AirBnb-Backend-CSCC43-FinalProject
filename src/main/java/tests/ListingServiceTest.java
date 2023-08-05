@@ -1,12 +1,16 @@
 package tests;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import model.constant.ListingType;
 import service.ListingService;
+import service.Utils;
 
 public class ListingServiceTest {
+    private static Utils utils = new Utils();
 
     public static void main(String[] args) {
         ListingService listingService;
@@ -64,14 +68,15 @@ public class ListingServiceTest {
         String postalCode;
         String city;
         String country;
+        List<String> amenities = new ArrayList<>();
 
-        System.out.println("Enter hostUserId:");
+        System.out.println("\nEnter hostUserId:");
         hostUserId = scanner.nextInt();
         scanner.nextLine();
 
         String typeString = null; 
         while (true){
-            System.out.println("Enter listingType (House, Apartment, Guesthouse, Hotel):");
+            System.out.println("\nEnter listingType (House, Apartment, Guesthouse, Hotel):");
             typeString = scanner.nextLine();
             if (typeString.equals("House") || typeString.equals("Apartment") || typeString.equals("Guesthouse") || typeString.equals("Hotel")){
                 break;
@@ -80,27 +85,54 @@ public class ListingServiceTest {
         }
         type = ListingType.valueOf(typeString);
 
-        System.out.println("Enter locationLat:");
+        System.out.println("\nAll possible Amenities\n--------------------------\n" + utils.getAllAmenities());
+        while (true) {
+            System.out.println("\nEnter amenities your listing offers, separated by commas and first letter capitalized\n(e.g. Wifi,Smoke alarm,Carbon monoxide alarm) (or leave empty for any):");
+
+            String amenitiesInput = scanner.nextLine();
+            String[] amenitiesArray = amenitiesInput.split(",");
+        
+            boolean allValid = true;
+            if (!amenitiesInput.isEmpty()) {
+                for (String a : amenitiesArray) {
+                    if (!utils.isValidAmenity(a)) {
+                        System.out.println("Invalid amenity: " + a);
+                        allValid = false;
+                        break;
+                    }
+                    amenities.add(a);
+                }
+        
+                if (allValid) {
+                    break;
+                }
+            }
+            else{
+                break;
+            }
+        }
+
+        System.out.println("\nEnter locationLat:");
         locationLat = scanner.nextFloat();
 
-        System.out.println("Enter locationLong:");
+        System.out.println("\nEnter locationLong:");
         locationLong = scanner.nextFloat();
         scanner.nextLine();
 
-        System.out.println("Enter Postal Code:");
+        System.out.println("\nEnter Postal Code:");
         postalCode = scanner.nextLine();
 
-        System.out.println("Enter City:");
+        System.out.println("\nEnter City:");
         city = scanner.nextLine();
 
-        System.out.println("Enter Country:");
+        System.out.println("\nEnter Country:");
         country = scanner.nextLine();
 
-        listingService.createListing(hostUserId, type, locationLat, locationLong, postalCode, city, country);
+        listingService.createListing(hostUserId, type, locationLat, locationLong, postalCode, city, country, amenities);
     }
 
     private static void deleteListing(Scanner scanner, ListingService listingService) {
-        System.out.println("Enter listingId:");
+        System.out.println("\nEnter listingId:");
         int listingId = scanner.nextInt();
 
         listingService.deleteListing(listingId);

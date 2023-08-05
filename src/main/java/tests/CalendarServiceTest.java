@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.Scanner;
 
 import service.CalendarService;
+import service.Utils;
 
 public class CalendarServiceTest {
+    private static Utils utils = new Utils();
 
     public static void main(String[] args) {
         CalendarService calendarService;
@@ -78,11 +80,11 @@ public class CalendarServiceTest {
         Date endDate;
         Map<Date, Double> datesPrices;
 
-        System.out.println("Enter listingId:");
+        System.out.println("\nEnter listingId:");
         listingId = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.println("Do you want to make the days available or unavailable? (A:= Available / U:= Unavailable):");
+        System.out.println("\nDo you want to make the days available or unavailable? (A:= Available / U:= Unavailable):");
         availabilityChoice = scanner.nextLine().trim().toLowerCase();
 
         makeAvailable = false;
@@ -98,20 +100,32 @@ public class CalendarServiceTest {
             }
         }
 
-        System.out.println("Do you want to update multiple days or just one? (Y:= Multiple Days / N:= Just one Day):");
+        System.out.println("\nDo you want to update multiple days or just one? (Y:= Multiple Days / N:= Just one Day):");
         multipleDays = scanner.nextLine().trim().toLowerCase();    
 
+        boolean isFirstTimeHost = calendarService.isFirstTimeHost(listingId);
+        if (isFirstTimeHost){
+            Double recommendedPrice = calendarService.getRecommendedPrice(listingId);
+            if (recommendedPrice != null && recommendedPrice > 0.0){
+                System.out.println("\nWe see that this is your first time hosting this listing on MyBNB!\n Let MyBNB recommend you a price for your area: $"+ utils.round(recommendedPrice,2));
+            }
+            else{
+            System.out.println("\nWe see that this is your first time hosting this listing on MyBNB!\n Congratulations, you're the first Host in your area! (We don't have enough data to recommend you a price in your area ;-; )) \n"+
+                "** Note **: In North America, the average price is $208/night, Europe is $114/night, Asia Pacific is $104/night, Africa is $84/night, Latin America is $81/night (According to www.alltherooms.com, 2021)");
+            }
+        }
+
         if (multipleDays.equals("y") || multipleDays.equals("yes")) {
-            System.out.println("Enter start date (yyyy-mm-dd):");
+            System.out.println("\nEnter start date (yyyy-mm-dd):");
             startDate = Date.valueOf(scanner.nextLine());
 
-            System.out.println("Enter end date (yyyy-mm-dd):");
+            System.out.println("\nEnter end date (yyyy-mm-dd):");
             endDate = Date.valueOf(scanner.nextLine());
 
             datesPrices = new HashMap<>();
             for (LocalDate date = startDate.toLocalDate(); !date.isAfter(endDate.toLocalDate()); date = date.plusDays(1)) {
                 if (makeAvailable){
-                    System.out.println("Enter price for date " + date + ":");
+                    System.out.println("\nEnter price for date " + date + ":");
                     Double price = scanner.nextDouble();
                     scanner.nextLine();
                     datesPrices.put(Date.valueOf(date), price);         
@@ -120,18 +134,22 @@ public class CalendarServiceTest {
                     datesPrices.put(Date.valueOf(date), null);         
                 }       
             }
-            calendarService.updateListingMakeUnavailable(listingId, datesPrices);
-            
+            if (makeAvailable){
+                calendarService.updateListingAvailabilityAndPrice(listingId, datesPrices);
+            }
+            else{
+                calendarService.updateListingMakeUnavailable(listingId, datesPrices);
+            }            
 
         } else {
-            System.out.println("Enter availabilityDate (yyyy-mm-dd):");
+            System.out.println("\nEnter availabilityDate (yyyy-mm-dd):");
             Date availabilityDate = Date.valueOf(scanner.nextLine());
     
             if (!makeAvailable){
                 calendarService.updateListingMakeUnavailable(listingId, availabilityDate);
             }
             else{
-                System.out.println("Enter price you want for this date:");
+                System.out.println("\nEnter price you want for this date:");
                 Double price = scanner.nextDouble();
                 scanner.nextLine(); // Consume newline left-over            
                 calendarService.updateListingAvailabilityAndPrice(listingId, availabilityDate, price);
@@ -144,27 +162,39 @@ public class CalendarServiceTest {
         Date startDate;
         Date endDate;
 
-        System.out.println("Enter listingId:");
+        System.out.println("\nEnter listingId:");
         listingId = scanner.nextInt();
         scanner.nextLine();  // Consume newline left-over
+
+        boolean isFirstTimeHost = calendarService.isFirstTimeHost(listingId);
+        if (isFirstTimeHost){
+            Double recommendedPrice = calendarService.getRecommendedPrice(listingId);
+            if (recommendedPrice != null && recommendedPrice > 0.0){
+                System.out.println("\nWe see that this is your first time hosting this listing on MyBNB!\n Let MyBNB recommend you a price for your area: "+ utils.round(recommendedPrice,2));
+            }
+            else{
+                System.out.println("\nWe see that this is your first time hosting this listing on MyBNB!\n Congratulations, you're the first Host in your area! (We don't have enough data to recommend you a price in your area ;-; )) \n"+
+                "** Note **: In N America, the average price is $208/night, Europe is $114/night, Asia Pacific is $104/night, Africa is $84/night, Latin America is $81/night (According to www.alltherooms.com, 2021)");
+            }
+        }
         
         boolean validInput = false;
         while (!validInput) {
-            System.out.println("Do you want to update prices for a continuous date range? (Y/N):");
+            System.out.println("\nDo you want to update prices for a continuous date range? (Y/N):");
             String updateRangeAnswer = scanner.nextLine().toLowerCase();
     
             if(updateRangeAnswer.equals("y")) {
-                System.out.println("Enter start date (yyyy-mm-dd):");
+                System.out.println("\nEnter start date (yyyy-mm-dd):");
                 String startDateString = scanner.nextLine();
     
-                System.out.println("Enter end date (yyyy-mm-dd):");
+                System.out.println("\nEnter end date (yyyy-mm-dd):");
                 String endDateString = scanner.nextLine();
     
                 try {
                     startDate = Date.valueOf(startDateString);
                     endDate = Date.valueOf(endDateString);
     
-                    System.out.println("Enter price:");
+                    System.out.println("\nEnter price:");
                     float price = scanner.nextFloat();
                     scanner.nextLine();  // Consume newline left-over
     
@@ -174,13 +204,13 @@ public class CalendarServiceTest {
                     System.out.println("Invalid date format. Please try again.");
                 }
             } else if(updateRangeAnswer.equals("n")) {
-                System.out.println("Enter date (yyyy-mm-dd):");
+                System.out.println("\nEnter date (yyyy-mm-dd):");
                 String dateString = scanner.nextLine();
     
                 try {
                     Date date = Date.valueOf(dateString);
     
-                    System.out.println("Enter price:");
+                    System.out.println("\nEnter price:");
                     float price = scanner.nextFloat();
                     scanner.nextLine();  // Consume newline left-over
     
@@ -199,10 +229,10 @@ public class CalendarServiceTest {
         int listingId;
         Date date;
 
-        System.out.println("Enter listingId:");
+        System.out.println("\nEnter listingId:");
         listingId = scanner.nextInt();
 
-        System.out.println("Enter date (yyyy-mm-dd):");
+        System.out.println("\nEnter date (yyyy-mm-dd):");
         date = Date.valueOf(scanner.next());
 
         System.out.print("\nAvailability for Listing "+ listingId+": \n ---------------------\n");
@@ -215,13 +245,13 @@ public class CalendarServiceTest {
         Date endDate;
         Map<Date, String> dateAvailabilityMap;
 
-        System.out.println("Enter listingId:");
+        System.out.println("\nEnter listingId:");
         listingId = scanner.nextInt();
 
-        System.out.println("Enter start date (yyyy-mm-dd):");
+        System.out.println("\nEnter start date (yyyy-mm-dd):");
         startDate = Date.valueOf(scanner.next());
 
-        System.out.println("Enter end date (yyyy-mm-dd):");
+        System.out.println("\nEnter end date (yyyy-mm-dd):");
         endDate = Date.valueOf(scanner.next());
 
         dateAvailabilityMap = calendarService.getAvailabilityStatus(listingId, startDate, endDate);

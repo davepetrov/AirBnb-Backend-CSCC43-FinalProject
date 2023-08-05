@@ -1,13 +1,13 @@
 -------------------------ENTITIES-------------------------
 DROP TABLE BNBUser;
 
-DROP TABLE Listing;
-
-DROP TABLE Amenities;
+DROP TABLE Calendar;
 
 DROP TABLE Booking;
 
-DROP TABLE Calendar;
+DROP TABLE Listing;
+
+DROP TABLE Amenities;
 
 -------------------------RELATIONS-------------------------
 

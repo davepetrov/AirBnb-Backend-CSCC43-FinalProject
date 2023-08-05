@@ -56,7 +56,7 @@ public class ReviewService {
     public void hostReviewRenter(int hostUserId, int renterUserId, int rating, String comment) {
         try {
             // Check if renter has rented any of host's listings in the past week
-            String sql = "INSERT INTO Host_Review_Renter (hostUserId, renterUserId, comment, rating) " +
+            String sql = "INSERT INTO Host_Review_Renter (host_userId, renter_userId, comment, rating) " +
                          "SELECT ?, ?, ?, ? " +
                          "FROM Booking B " +
                          "INNER JOIN Listing L ON B.listingId = L.listingId " +
@@ -87,7 +87,7 @@ public class ReviewService {
     public void renterReviewHost(int renterUserId, int hostUserId, int rating, String comment) {
         try {
             // Check if renter has rented any of host's listings in the past week
-            String sql = "INSERT INTO Renter_Review_Host (renterUserId, hostUserId, comment, rating) " +
+            String sql = "INSERT INTO Renter_Review_Host (renter_userId, host_userId, comment, rating) " +
                          "SELECT ?, ?, ?, ? " +
                          "FROM Booking B " +
                          "INNER JOIN Listing L ON B.listingId = L.listingId " +
