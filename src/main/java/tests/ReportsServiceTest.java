@@ -7,7 +7,7 @@ import service.ReportsService;
 
 public class ReportsServiceTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
         ReportsService reportsService;
         try {
             reportsService = new ReportsService();

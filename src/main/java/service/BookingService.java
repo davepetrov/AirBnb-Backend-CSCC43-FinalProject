@@ -17,9 +17,9 @@ import model.entity.Booking;
 public class BookingService {
 
     //Database credentials
-    private final String CONNECTION = "jdbc:mysql://34.130.232.208/69project";
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/mybnb";
     private final String USER = "root";
-    private final String PASSWORD = "dp05092001";
+    private final String PASSWORD = "AtTJ#;s|o|PP$?KJ";
     private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
 
     private Connection conn;
@@ -30,7 +30,7 @@ public class BookingService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("Successfully connected to MySQL!");
+        System.out.println("\nSuccessfully connected to MySQL!");
     }
 
     public boolean createBooking(int listingId, int renterId, Date startDate, Date endDate) {
@@ -55,14 +55,21 @@ public class BookingService {
                 return false;
             }
         } catch (SQLException e) {
-            System.out.println("\n[Booking Failed] " + e.getMessage());
+            // System.out.println("\n[Booking Failed] " + e.getMessage());
+            if (e.getMessage().contains("Booking_ibfk_2")) {
+                System.out.println("\n[Booking Failed] Renter does not exist.");
+            } else if (e.getMessage().contains("Booking_ibfk_1")) {
+                System.out.println("\n[Booking Failed] Listing does not exist.");
+            } else {
+                System.out.println("\n[Booking Failed] " + e.getMessage());
+            }
             return false;
         }
     }
 
     public boolean hostCancelBooking(int bookingId) {
         if (cancelBooking(bookingId, UserType.Host)){
-            System.out.println("Host successfully cancelled a booking!");
+            System.out.println("\nHost successfully cancelled a booking!");
             return true;
         }
         return false;
@@ -70,7 +77,7 @@ public class BookingService {
 
     public boolean renterCancelBooking(int bookingId) {
         if (cancelBooking(bookingId, UserType.Renter)){
-            System.out.println("Renter successfully cancelled a booking!");
+            System.out.println("\nRenter successfully cancelled a booking!");
             return true;
         }
         return false;

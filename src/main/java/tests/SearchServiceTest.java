@@ -13,7 +13,7 @@ import service.Utils;
 public class SearchServiceTest {
     private static Utils utils;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
         utils = new Utils();
 
         SearchService searchService;
@@ -75,7 +75,7 @@ public class SearchServiceTest {
         Integer radiusKm;
         SortBy sortBy;
 
-        System.out.println("Include start and end dates? (Y/N):");
+        System.out.println("Include start and end dates? (Y/N) (If N, will look for dates from current date forwards):");
         while (true) {
             String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
 
@@ -147,7 +147,7 @@ public class SearchServiceTest {
         String city;
         String country;
 
-        System.out.println("Include start and end dates? (Y/N):");
+        System.out.println("Include start and end dates? (Y/N) (If N, will look for dates from current date forwards):");
         while (true) {
             String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
 
@@ -190,7 +190,7 @@ public class SearchServiceTest {
         boolean isAscending;
 
         
-        System.out.println("Include start and end dates? (Y/N):");
+        System.out.println("Include start and end dates? (Y/N) (If N, will look for dates from current date forwards):");
         while (true) {
             String input = scanner.nextLine().trim().toLowerCase(); // Read user input and normalize it
 

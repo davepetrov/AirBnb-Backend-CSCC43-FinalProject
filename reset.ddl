@@ -1,26 +1,20 @@
--------------------------ENTITIES-------------------------
-DROP TABLE BNBUser;
+-- -----------------------ENTITIES/RELATIONS-------------------------
+DROP TABLE IF EXISTS Calendar;
+DROP TABLE IF EXISTS Listing_Offers_Amenities;
+DROP TABLE IF EXISTS Renter_Review_Host;
+DROP TABLE IF EXISTS Renter_Review_Listing;
+DROP TABLE IF EXISTS Host_Review_Renter;
+DROP TABLE IF EXISTS Amenities;
+DROP TABLE IF EXISTS Booking;
+DROP TABLE IF EXISTS Listing;
+DROP TABLE IF EXISTS BNBUser;
 
-DROP TABLE Calendar;
+-- -----------------------TRIGGERS-------------------------
 
-DROP TABLE Booking;
+DROP TRIGGER IF EXISTS UpdateAvailabilityOnCancelTrigger;
+DROP TRIGGER IF EXISTS UpdateAvailabilityOnUNDOCancelTrigger;
+DROP TRIGGER IF EXISTS CancelFutureBookingsOnListingDeletionTrigger;
 
-DROP TABLE Listing;
-
-DROP TABLE Amenities;
-
--------------------------RELATIONS-------------------------
-
-DROP TABLE Listing_Offers_Amenities;
-
-DROP TABLE Host_Review_Renter;
-
-DROP TABLE Renter_Review_Host;
-
-DROP TABLE Renter_Review_Listing;
-
--------------------------TRIGGERS-------------------------
-
-DROP TRIGGER ToBookAvailabilityTrigger;
-
-DROP TRIGGER ToDeleteAvailabilityTrigger;
+-- -----------------------PROCEDURE-------------------------
+DROP PROCEDURE IF EXISTS CreateBookingAndUpdateCalendar;
+DROP PROCEDURE IF EXISTS InsertRecordsIntoCalendar;

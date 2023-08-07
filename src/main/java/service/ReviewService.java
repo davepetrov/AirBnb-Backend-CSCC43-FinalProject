@@ -8,9 +8,9 @@ import java.sql.SQLException;
 public class ReviewService {
 
     //Database credentials
-    private final String CONNECTION = "jdbc:mysql://34.130.232.208/69project";
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/mybnb";
     private final String USER = "root";
-    private final String PASSWORD = "dp05092001";
+    private final String PASSWORD = "AtTJ#;s|o|PP$?KJ";
     private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
 
     private Connection conn;
@@ -20,17 +20,17 @@ public class ReviewService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("Successfully connected to MySQL!");
+        System.out.println("\nSuccessfully connected to MySQL!");
     }
 
     public void renterReviewListing(int userId, int listingId, int rating, String comment) {
         try {
             // Check if renter has rented the specified listing in the past week
-            String sql = "INSERT INTO Renter_Review_Listing (renterUserId, listingId, comment, rating) " +
+            String sql = "INSERT INTO Renter_Review_Listing (renter_userId, listingId, comment, rating) " +
                          "SELECT ?, ?, ?, ? " +
                          "FROM Booking " +
                          "WHERE renter_userId = ? AND listingId = ? AND " +
-                         "created_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) " +
+                         "endDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK) " +
                          "LIMIT 1";
     
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -46,10 +46,15 @@ public class ReviewService {
                 System.out.println("Renter has not rented the specified listing in the past week.\n");
             }
             else{
-                System.out.println("Successfully reviewed listing!\n");
+                System.out.println("\nSuccessfully reviewed listing!\n");
             }
         } catch (SQLException e) {
-            System.out.println("[renterReviewListing Error] " + e.getMessage());
+            if (e.getMessage().contains("Duplicate entry")){
+                System.out.println("Renter already reviewed this listing in the past week.\n");
+            }
+            else{
+                System.out.println("[renterReviewListing Error] " + e.getMessage());
+            }
         }
     }
 
@@ -59,9 +64,9 @@ public class ReviewService {
             String sql = "INSERT INTO Host_Review_Renter (host_userId, renter_userId, comment, rating) " +
                          "SELECT ?, ?, ?, ? " +
                          "FROM Booking B " +
-                         "INNER JOIN Listing L ON B.listingId = L.listingId " +
+                         "JOIN Listing L ON B.listingId = L.listingId " +
                          "WHERE B.renter_userId = ? AND L.host_userId = ? AND " +
-                         "B.created_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) " +
+                         "B.endDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK) " +
                          "LIMIT 1";
     
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -74,13 +79,18 @@ public class ReviewService {
     
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
-                System.out.println("Renter has not rented any of the host's listings in the past week.\n");
+                System.out.println("\nRenter has not rented any of the host's listings in the past week.\n");
             }
             else{
-                System.out.println("Successfully reviewed listing!\n");
+                System.out.println("\nSuccessfully reviewed listing!\n");
             }
         } catch (SQLException e) {
-            System.out.println("[hostReviewRenter Error] " + e.getMessage());
+            if (e.getMessage().contains("Duplicate entry")){
+                System.out.println("Host already reviewed this renter in the past week.\n");
+            }
+            else{
+                System.out.println("[hostReviewRenter Error] " + e.getMessage());
+            }
         }
     }
 
@@ -90,9 +100,9 @@ public class ReviewService {
             String sql = "INSERT INTO Renter_Review_Host (renter_userId, host_userId, comment, rating) " +
                          "SELECT ?, ?, ?, ? " +
                          "FROM Booking B " +
-                         "INNER JOIN Listing L ON B.listingId = L.listingId " +
+                         "JOIN Listing L ON B.listingId = L.listingId " +
                          "WHERE B.renter_userId = ? AND L.host_userId = ? AND " +
-                         "B.created_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) " +
+                         "B.endDate >= DATE_SUB(NOW(), INTERVAL 1 WEEK) " +
                          "LIMIT 1";
     
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -109,10 +119,15 @@ public class ReviewService {
                 return;
             }
             else{
-                System.out.println("Successfully reviewed host!\n");
+                System.out.println("\nSuccessfully reviewed host!\n");
             }
         } catch (SQLException e) {
-            System.out.println("[renterReviewHost Error] " + e.getMessage());
+            if (e.getMessage().contains("Duplicate entry")){
+                System.out.println("Renter already reviewed this host in the past week.\n");
+            }
+            else{
+                System.out.println("[renterReviewHost Error] " + e.getMessage());
+            }
         }
     
     }

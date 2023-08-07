@@ -11,7 +11,7 @@ import service.BookingService;
 
 public class BookingServiceTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
         BookingService bookingService;
         try {
             bookingService = new BookingService();
@@ -74,10 +74,10 @@ public class BookingServiceTest {
         Date startDate;
         Date endDate;
 
-        System.out.println("\nEnter listingId (Required):");
+        System.out.println("\nEnter ID of Listing (Required):");
         listingId = scanner.nextInt();
 
-        System.out.println("\nEnter renterId (Required):");
+        System.out.println("\nEnter ID of Renter (Required):");
         renterId = scanner.nextInt();
 
         System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
@@ -103,7 +103,7 @@ public class BookingServiceTest {
     }
 
     private static void getBookingsByListingId(Scanner scanner, BookingService bookingService) {
-        System.out.println("\nEnter listingId:");
+        System.out.println("\nEnter ID of Listing:");
         int listingId = scanner.nextInt();
 
         List<Booking> bookings = bookingService.getBookingsByListingId(listingId);

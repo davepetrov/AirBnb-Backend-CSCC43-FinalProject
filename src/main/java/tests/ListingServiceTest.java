@@ -6,13 +6,15 @@ import java.util.List;
 import java.util.Scanner;
 
 import model.constant.ListingType;
+import model.entity.Amenity;
 import service.ListingService;
 import service.Utils;
 
 public class ListingServiceTest {
-    private static Utils utils = new Utils();
+    private static Utils utils;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        utils = new Utils();
         ListingService listingService;
         try {
             listingService = new ListingService();
@@ -26,10 +28,12 @@ public class ListingServiceTest {
         while (true) {
             System.out.println("\n===== Listing Service =====");
             System.out.println("1. Create Listing");
-            System.out.println("2. Delete Listing");
-            System.out.println("3. Exit");
-            System.out.println("4. > Switch to Booking Service");
-            System.out.println("5. < Switch to User Service");
+            System.out.println("2. Remove Amenities");
+            System.out.println("3. Add Amenities");
+            System.out.println("4. Delete Listing");
+            System.out.println("5. Exit");
+            System.out.println("6. > Switch to Booking Service");
+            System.out.println("7. < Switch to User Service");
 
             System.out.print("\nEnter your choice: ");
 
@@ -41,17 +45,23 @@ public class ListingServiceTest {
                     createListing(scanner, listingService);
                     break;
                 case 2:
-                    deleteListing(scanner, listingService);
+                    removeAmenities(scanner, listingService);
                     break;
                 case 3:
+                    addAmenities(scanner, listingService);
+                    break;
+                case 4:
+                    deleteListing(scanner, listingService);
+                    break;
+                case 5:
                     System.out.println("Exiting...");
                     scanner.close();
                     System.exit(0);
                     break;
-                case 4:
+                case 6:
                     BookingServiceTest.main(args);
                     break;
-                case 5:
+                case 7:
                     UserServiceTest.main(args);
                     break;
                 default:
@@ -70,7 +80,7 @@ public class ListingServiceTest {
         String country;
         List<String> amenities = new ArrayList<>();
 
-        System.out.println("\nEnter hostUserId:");
+        System.out.println("\nEnter ID of Host:");
         hostUserId = scanner.nextInt();
         scanner.nextLine();
 
@@ -112,10 +122,10 @@ public class ListingServiceTest {
             }
         }
 
-        System.out.println("\nEnter locationLat:");
+        System.out.println("\nEnter Latitude:");
         locationLat = scanner.nextFloat();
 
-        System.out.println("\nEnter locationLong:");
+        System.out.println("\nEnter Longitude:");
         locationLong = scanner.nextFloat();
         scanner.nextLine();
 
@@ -131,8 +141,94 @@ public class ListingServiceTest {
         listingService.createListing(hostUserId, type, locationLat, locationLong, postalCode, city, country, amenities);
     }
 
+    private static void removeAmenities(Scanner scanner, ListingService listingService) {
+        System.out.println("\nEnter ID of Listing:");
+        int listingId = scanner.nextInt();
+
+        System.out.println("\nYour listing currently has The following Amenities\n---------------------------------------------");
+        listingService.getAmenities(listingId);
+
+        System.out.println("\nAll possible Amenities\n---------------------------------------------\n" + utils.getAllAmenities());
+
+        scanner.nextLine();
+        while (true) {
+            System.out.println("\nEnter amenities you want to REMOVE, separated by commas and first letter capitalized\n(e.g. Wifi,Smoke alarm,Carbon monoxide alarm) (or leave empty for none):");
+
+            String amenitiesInput = scanner.nextLine();
+            String[] amenitiesArray = amenitiesInput.split(",");
+        
+            boolean allValid = true;
+            if (!amenitiesInput.isEmpty()) {
+                for (String a : amenitiesArray) {
+                    if (!utils.isValidAmenity(a)) {
+                        System.out.println("Invalid amenity: " + a);
+                        allValid = false;
+                        break;
+                    }
+                }
+        
+                if (allValid) {
+                    List<String> amenities = new ArrayList<>();
+                    for (String a : amenitiesArray) {
+                        amenities.add(a);
+                    }
+                    listingService.removeAmenities(listingId, amenities);
+                    break;
+                }
+            }
+            else{
+                break;
+            }
+        }
+
+    }
+
+    private static void addAmenities(Scanner scanner, ListingService listingService) {
+        System.out.println("\nEnter ID of Listing:");
+        int listingId = scanner.nextInt();
+
+        System.out.println("\nYour listing currently has The following Amenities\n---------------------------------------------");
+        listingService.getAmenities(listingId);
+
+        System.out.println("\nAll possible Amenities\n---------------------------------------------\n" + utils.getAllAmenities());
+
+        System.out.println("\n[Host toolkit]Here are some recommended Amenities\n---------------------------------------------");
+        listingService.getRecommendedAmenities(listingId);
+
+        scanner.nextLine();
+        while (true) {
+            System.out.println("\nEnter amenities you want to ADD, separated by commas and first letter capitalized\n(e.g. Wifi,Smoke alarm,Carbon monoxide alarm) (or leave empty for none):");
+
+            String amenitiesInput = scanner.nextLine();
+            String[] amenitiesArray = amenitiesInput.split(",");
+        
+            boolean allValid = true;
+            if (!amenitiesInput.isEmpty()) {
+                for (String a : amenitiesArray) {
+                    if (!utils.isValidAmenity(a)) {
+                        System.out.println("Invalid amenity: " + a);
+                        allValid = false;
+                        break;
+                    }
+                }
+        
+                if (allValid) {
+                    List<String> amenities = new ArrayList<>();
+                    for (String a : amenitiesArray) {
+                        amenities.add(a);
+                    }
+                    listingService.addAmenities(listingId, amenities);
+                    break;
+                }
+            }
+            else{
+                break;
+            }
+        }
+    }
+
     private static void deleteListing(Scanner scanner, ListingService listingService) {
-        System.out.println("\nEnter listingId:");
+        System.out.println("\nEnter ID of Listing:");
         int listingId = scanner.nextInt();
 
         listingService.deleteListing(listingId);

@@ -16,9 +16,9 @@ import java.util.TreeMap;
 public class CalendarService {
 
     //Database credentials
-    private final String CONNECTION = "jdbc:mysql://34.130.232.208/69project";
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/mybnb";
     private final String USER = "root";
-    private final String PASSWORD = "dp05092001";
+    private final String PASSWORD = "AtTJ#;s|o|PP$?KJ";
     private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
 
     private Connection conn;
@@ -28,7 +28,7 @@ public class CalendarService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("Successfully connected to MySQL!");
+        System.out.println("\nSuccessfully connected to MySQL!");
     }
 
     public boolean updateListingAvailabilityAndPrice(int listingId, Map<Date, Double> availabilityAndPrice) {
@@ -54,7 +54,7 @@ public class CalendarService {
             int rowsAffected = stmt.executeUpdate(sql.toString());
     
             if (rowsAffected > 0) {
-                System.out.println("Successfully updated listing availability and price for the days that were available... ");
+                System.out.println("\nSuccessfully updated listing availability and price for the days that were available... ");
                 return true;
             } else {
                 System.out.println("Failed to update listing availability and price. The listings may already be booked on these dates.");
@@ -80,14 +80,14 @@ public class CalendarService {
             int rowsAffected = stmt.executeUpdate();
     
             if (rowsAffected > 0) {
-                System.out.println("Successfully updated listing availability and price!");
+                System.out.println("\nSuccessfully updated listing availability and price!");
                 return true;
             } else {
-                System.out.println("Failed to update listing availability and price. The listing may already be booked on these dates.");
+                System.out.println("\nFailed to update listing availability and price. The listing may already be booked on these dates.");
                 return false;
             }
         } catch (Exception e) {
-            System.out.println("[Update Listing Availability And Price Failed] " + e.getMessage());
+            System.out.println("\n[Update Listing Availability And Price Failed] " + e.getMessage());
             return false;
         }
     }

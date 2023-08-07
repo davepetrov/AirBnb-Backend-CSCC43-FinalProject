@@ -6,7 +6,7 @@ import service.ReviewService;
 
 public class ReviewServiceTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
         ReviewService reviewService;
         try {
             reviewService = new ReviewService();
@@ -47,7 +47,7 @@ public class ReviewServiceTest {
                     scanner.close();
                     System.exit(0);
                     break;
-                case 5:
+            case 5:
                     SearchServiceTest.main(args);
                     break;
                 case 6:
@@ -60,18 +60,18 @@ public class ReviewServiceTest {
     }
 
     private static void renterReviewListing(Scanner scanner, ReviewService reviewService) {
-        System.out.println("\nEnter renterUserId:");
+        System.out.println("\nEnter ID of Renter:");
         int renterUserId = scanner.nextInt();
 
-        System.out.println("\nEnter listingId:");
+        System.out.println("\nEnter ID of Listing:");
         int listingId = scanner.nextInt();
 
-        System.out.println("\nEnter rating (1 to 5):");
+        System.out.println("\nEnter Rating (1 to 5):");
         int rating = scanner.nextInt();
 
         scanner.nextLine();
 
-        System.out.println("\nEnter comment (Could be empty):");
+        System.out.println("\nEnter Comment (Could be empty):");
         String comment = scanner.nextLine();
         if (comment.isEmpty()){
             comment = null;
@@ -86,18 +86,18 @@ public class ReviewServiceTest {
         int rating;
         String comment;
 
-        System.out.println("\nEnter hostUserId:");
+        System.out.println("\nEnter ID of Host:");
         hostUserId = scanner.nextInt();
 
-        System.out.println("\nEnter renterUserId:");
+        System.out.println("\nEnter ID of Renter:");
         renterUserId = scanner.nextInt();
 
-        System.out.println("\nEnter rating (1 to 5):");
+        System.out.println("\nEnter Rating (1 to 5):");
         rating = scanner.nextInt();
 
         scanner.nextLine(); 
 
-        System.out.println("\nEnter comment (Could be empty):");
+        System.out.println("\nEnter Comment (Could be empty):");
         comment = scanner.nextLine();
         if (comment.isEmpty()){
             comment = null;
@@ -112,18 +112,18 @@ public class ReviewServiceTest {
         int rating;
         String comment;
 
-        System.out.println("\nEnter renterUserId:");
+        System.out.println("\nEnter ID of Renter:");
         renterUserId = scanner.nextInt();
 
-        System.out.println("\nEnter hostUserId:");
+        System.out.println("\nEnter ID of Host:");
         hostUserId = scanner.nextInt();
 
-        System.out.println("\nEnter rating (1 to 5):");
+        System.out.println("\nEnter Rating (1 to 5):");
         rating = scanner.nextInt();
 
         scanner.nextLine();
 
-        System.out.println("\nEnter comment (Could be empty):");
+        System.out.println("\nEnter Comment (Could be empty):");
         comment = scanner.nextLine();
         if (comment.isEmpty()){
             comment = null;

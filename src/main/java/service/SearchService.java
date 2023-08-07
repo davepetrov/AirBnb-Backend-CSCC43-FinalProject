@@ -15,9 +15,9 @@ import model.constant.SortBy;
 public class SearchService {
 
     //Database credentials
-    private final String CONNECTION = "jdbc:mysql://34.130.232.208/69project";
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/mybnb";
     private final String USER = "root";
-    private final String PASSWORD = "dp05092001";
+    private final String PASSWORD = "AtTJ#;s|o|PP$?KJ";
     private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
     
     private Connection conn;
@@ -32,7 +32,7 @@ public class SearchService {
         Class.forName(CLASSNAME);
         
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("Successfully connected to MySQL!");
+        System.out.println("\nSuccessfully connected to MySQL!");
     }
         
     public List<ListingSearch> findAvailableListingsByLatitudeLongitude(Date startDate, Date endDate, double latitude, double longitude, int radiusKm, boolean isAscending, SortBy sort){
@@ -45,20 +45,20 @@ public class SearchService {
             sql = "SELECT l.listingId, CONCAT(u.firstName, ' ', u.surName) AS hostFullName, l.locationLat, l.locationLong, l.postalCode, l.city, l.country, c.price, c.availabilityDate, " +
                 " (6371 * acos(cos(radians( ? )) * cos(radians(l.locationLat)) * cos(radians(l.locationLong) - radians( ? )) + sin(radians( ? )) * sin(radians(l.locationLat)))) AS distance" +
                 " FROM Listing AS l" +
-                " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
-                " INNER JOIN BNBUser AS u ON l.host_userId = u.userId" +
+                " JOIN Calendar AS c ON l.listingId = c.listingId" +
+                " JOIN BNBUser AS u ON l.host_userId = u.userId" +
                 " WHERE c.availabilityDate >= CURDATE() "+
-                "   AND c.isAvailable = true AND c.price>=0" +
+                "   AND c.bookingId IS NULL AND c.price>=0" +
                 " HAVING distance <= ? ";
         }
         else {
             sql = "SELECT l.listingId, CONCAT(u.firstName, ' ', u.surName) AS hostFullName, l.locationLat, l.locationLong, l.postalCode, l.city, l.country, c.price, c.availabilityDate, " +
                 " (6371 * acos(cos(radians( ? )) * cos(radians(l.locationLat)) * cos(radians(l.locationLong) - radians( ? )) + sin(radians( ? )) * sin(radians(l.locationLat)))) AS distance" +
                 " FROM Listing AS l" +
-                " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
-                " INNER JOIN BNBUser AS u ON l.host_userId = u.userId" +
+                " JOIN Calendar AS c ON l.listingId = c.listingId" +
+                " JOIN BNBUser AS u ON l.host_userId = u.userId" +
                 " WHERE c.availabilityDate BETWEEN ? AND ? "+
-                "   AND c.isAvailable = true AND c.price>=0" +
+                "   AND c.bookingId IS NULL AND c.price>=0 " +
                 " HAVING distance <= ? ";
         }
 
@@ -115,19 +115,19 @@ public class SearchService {
         if (startDate != null && endDate != null) {
             sql = "SELECT l.listingId, CONCAT(u.firstName, ' ', u.surName) AS hostFullName, l.locationLat, l.locationLong, l.postalCode, l.city, l.country, c.price, c.availabilityDate" +
             " FROM Listing AS l" +
-            " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
-            " INNER JOIN BNBUser AS u ON l.host_userId = u.userId" +
+            " JOIN Calendar AS c ON l.listingId = c.listingId" +
+            " JOIN BNBUser AS u ON l.host_userId = u.userId" +
             " WHERE c.availabilityDate BETWEEN ? AND ?"+
-            "   AND l.postalCode = ? AND  c.price>=0 AND l.city = ? AND l.country = ?";
+            "   AND c.price>=0 AND l.postalCode = ? AND l.city = ? AND l.country = ? AND c.bookingId IS NULL";
         }
 
         else {
             sql = "SELECT l.listingId, CONCAT(u.firstName, ' ', u.surName) AS hostFullName, l.locationLat, l.locationLong, l.postalCode, l.city, l.country, c.price, c.availabilityDate" +
             " FROM Listing AS l" +
-            " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
-            " INNER JOIN BNBUser AS u ON l.host_userId = u.userId" +
+            " JOIN Calendar AS c ON l.listingId = c.listingId" +
+            " JOIN BNBUser AS u ON l.host_userId = u.userId" +
             " WHERE c.availabilityDate >= CURDATE()"+
-            "   AND l.postalCode = ? AND c.price>=0 AND l.city = ? AND l.country = ?";
+            "   AND c.price>=0 AND l.postalCode = ? AND l.city = ? AND l.country = ? AND c.bookingId IS NULL";
         }
         
         List<ListingSearch> results = new ArrayList<ListingSearch>();
@@ -175,11 +175,11 @@ public class SearchService {
         
         String sql = "SELECT l.listingId, CONCAT(u.firstName, ' ', u.surName) AS hostFullName, l.locationLat, l.locationLong, l.postalCode, l.city, l.country, c.price, c.availabilityDate" +
                     " FROM Listing AS l" +
-                    " INNER JOIN Calendar AS c ON l.listingId = c.listingId" +
-                    " INNER JOIN Listing_Offers_Amenities AS la ON l.listingId = la.listingId" +
-                    " INNER JOIN BNBUser AS u ON l.host_userId = u.userId" +
-                    " INNER JOIN Amenities AS a ON a.amenityId = la.amenityId" +
-                    " WHERE c.isAvailable = true AND c.price>=0";
+                    " JOIN Calendar AS c ON l.listingId = c.listingId" +
+                    " JOIN Listing_Offers_Amenities AS la ON l.listingId = la.listingId" +
+                    " JOIN BNBUser AS u ON l.host_userId = u.userId" +
+                    " JOIN Amenities AS a ON a.amenityId = la.amenityId" +
+                    " WHERE c.bookingId IS NULL AND c.price>=0";
 
 
         List<Object> params = new ArrayList<>();

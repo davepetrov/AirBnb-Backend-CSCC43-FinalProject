@@ -12,9 +12,10 @@ import service.CalendarService;
 import service.Utils;
 
 public class CalendarServiceTest {
-    private static Utils utils = new Utils();
+    private static Utils utils;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        utils = new Utils();
         CalendarService calendarService;
         try {
             calendarService = new CalendarService();
@@ -80,7 +81,7 @@ public class CalendarServiceTest {
         Date endDate;
         Map<Date, Double> datesPrices;
 
-        System.out.println("\nEnter listingId:");
+        System.out.println("\nEnter ID of Listing:");
         listingId = scanner.nextInt();
         scanner.nextLine();
 
@@ -107,7 +108,7 @@ public class CalendarServiceTest {
         if (isFirstTimeHost){
             Double recommendedPrice = calendarService.getRecommendedPrice(listingId);
             if (recommendedPrice != null && recommendedPrice > 0.0){
-                System.out.println("\nWe see that this is your first time hosting this listing on MyBNB!\n Let MyBNB recommend you a price for your area: $"+ utils.round(recommendedPrice,2));
+                System.out.println("\nWe see that this is your first time hosting this listing on MyBNB!\n[Host toolkit] MyBNB recommends you a price for your area: $"+ utils.round(recommendedPrice,2));
             }
             else{
             System.out.println("\nWe see that this is your first time hosting this listing on MyBNB!\n Congratulations, you're the first Host in your area! (We don't have enough data to recommend you a price in your area ;-; )) \n"+
@@ -162,7 +163,7 @@ public class CalendarServiceTest {
         Date startDate;
         Date endDate;
 
-        System.out.println("\nEnter listingId:");
+        System.out.println("\nEnter ID of Listing:");
         listingId = scanner.nextInt();
         scanner.nextLine();  // Consume newline left-over
 
@@ -229,7 +230,7 @@ public class CalendarServiceTest {
         int listingId;
         Date date;
 
-        System.out.println("\nEnter listingId:");
+        System.out.println("\nEnter ID of Listing:");
         listingId = scanner.nextInt();
 
         System.out.println("\nEnter date (yyyy-mm-dd):");
@@ -245,7 +246,7 @@ public class CalendarServiceTest {
         Date endDate;
         Map<Date, String> dateAvailabilityMap;
 
-        System.out.println("\nEnter listingId:");
+        System.out.println("\nEnter ID of Listing:");
         listingId = scanner.nextInt();
 
         System.out.println("\nEnter start date (yyyy-mm-dd):");

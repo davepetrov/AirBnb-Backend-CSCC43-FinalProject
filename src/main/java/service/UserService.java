@@ -10,9 +10,9 @@ import java.sql.SQLException;
 public class UserService {
 
     //Database credentials
-    private final String CONNECTION = "jdbc:mysql://34.130.232.208/69project";
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/mybnb";
     private final String USER = "root";
-    private final String PASSWORD = "dp05092001";
+    private final String PASSWORD = "AtTJ#;s|o|PP$?KJ";
     private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
 
     private Connection conn;
@@ -22,7 +22,7 @@ public class UserService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("Successfully connected to MySQL!");
+        System.out.println("\nSuccessfully connected to MySQL!");
     }
 
     public boolean createUser(String firstname, String surname, Date dob, String occupation, String sin, String postalCode, String city, String country, String creditcard ) {
@@ -77,7 +77,7 @@ public class UserService {
             System.out.println("[Creditcard Update Failed] " + e.getMessage());
             return;
         }
-        System.out.println("Successfully updated creditcard!\n");
+        System.out.println("\nSuccessfully updated creditcard!\n");
 
     }
 

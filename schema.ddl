@@ -1,5 +1,4 @@
-
--------------------------ENTITIES-------------------------
+-- -----------------------ENTITIES-------------------------
 CREATE TABLE BNBUser (
     userId INT NOT NULL AUTO_INCREMENT,
     firstName VARCHAR(255),
@@ -11,7 +10,7 @@ CREATE TABLE BNBUser (
     city VARCHAR(255),
     country VARCHAR(255),
     creditcard VARCHAR(255) DEFAULT NULL,
-
+    
     PRIMARY KEY (userId)
 );
 
@@ -35,10 +34,8 @@ CREATE TABLE Listing (
 );
 
 CREATE TABLE Amenities (
-    amenityId INT NOT NULL,
-    amenityName VARCHAR(255) UNIQUE,
-
-    PRIMARY KEY(amenityId)
+    amenityName VARCHAR(255),
+    PRIMARY KEY(amenityName)
 );
 
 CREATE TABLE Booking (
@@ -54,7 +51,7 @@ CREATE TABLE Booking (
 
     PRIMARY KEY (bookingId),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
         ON UPDATE CASCADE,
     FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
         ON DELETE SET NULL 
@@ -70,23 +67,23 @@ CREATE TABLE Calendar (
 
     PRIMARY KEY (listingId, availabilityDate),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
         ON UPDATE CASCADE,
     FOREIGN KEY (bookingId) REFERENCES Booking (bookingId)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
--------------------------RELATIONS-------------------------
+-- -----------------------RELATIONS-------------------------
 
 CREATE TABLE Listing_Offers_Amenities (
     listingId INT,
-    amenityId INT,
-    PRIMARY KEY (listingId, amenityId),
+    amenityName VARCHAR(255),
+    PRIMARY KEY (listingId, amenityName),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (amenityId) REFERENCES Amenities (amenityId)
+    FOREIGN KEY (amenityName) REFERENCES Amenities (amenityName)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
@@ -104,7 +101,7 @@ CREATE TABLE Host_Review_Renter (
     FOREIGN KEY (host_userId) REFERENCES BNBUser (userId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (host_userId) REFERENCES BNBUser (userId)
+    FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
@@ -149,9 +146,11 @@ CREATE TABLE Renter_Review_Listing (
     CONSTRAINT CheckRating3 CHECK (rating BETWEEN 1 and 5)
 );
 
--------------------------PROCEDURES-------------------------
+-- -----------------------PROCEDURES (1)-------------------------
+
 -- When a booking takes place, update unavailability in Calendar
-DELIMITER $$ CREATE PROCEDURE CreateBookingAndUpdateCalendar(
+DELIMITER $$ 
+CREATE PROCEDURE CreateBookingAndUpdateCalendar(
     IN p_listingId INT,
     IN p_renterId INT,
     IN p_startDate DATE,
@@ -218,9 +217,11 @@ END IF;
 END 
 $$ DELIMITER;
 
--------------------------TRIGGERS-------------------------
+-- -----------------------Triggers (3)-------------------------
 
 -- 1. Trigger for When a cancellation takes place, update unavailability in Calendar
+SHOW TRIGGERS;
+
 DELIMITER $$ 
 CREATE TRIGGER UpdateAvailabilityOnCancelTrigger
 AFTER
@@ -279,84 +280,3 @@ WHERE
 
 END;
 $$ DELIMITER
-
-
--- 4. Trigger when a user is deleted, delete all listings
-DELIMITER $$ 
-CREATE TRIGGER DeleteListingsOnUserDeletionTrigger
-AFTER
-    DELETE ON BNBUser FOR EACH ROW BEGIN
-
-DELETE FROM
-    Listing
-WHERE
-    host_userId = OLD.userId;
-END;
-
-$$ DELIMITER;
-
--- 5. Trigger when a listing is delete, delete all reviews for the listing
-DELIMITER $$ 
-CREATE TRIGGER DeleteReviewsOnListingDeletionTrigger
-AFTER
-    DELETE ON Listing FOR EACH ROW BEGIN
-
-DELETE FROM
-    Renter_Review_Listing
-WHERE
-    listingId = OLD.listingId;
-END;
-
-$$ DELIMITER;
-
--- 6. Trigger when a user is deleted, delete all reviews for the user
-DELIMITER $$ 
-CREATE TRIGGER DeleteReviewsOnUserDeletionTrigger
-AFTER
-    DELETE ON BNBUser FOR EACH ROW BEGIN
-
-DELETE FROM
-    Host_Review_Renter
-WHERE
-    host_userId = OLD.userId OR renter_userId = OLD.userId;
-
-DELETE FROM
-    Renter_Review_Host
-WHERE
-    host_userId = OLD.userId OR renter_userId = old.userId;
-
-DELETE FROM
-    Renter_Review_Listing
-WHERE
-    renter_userId = OLD.userId;
-END;
-$$ DELIMITER;
-
--------------------------CONFIGS-------------------------
-INSERT INTO
-    Amenities (amenityId, amenityName)
-VALUES
-    (1, 'Wifi'),
-    (2, 'Kitchen'),
-    (3, 'Washer'),
-    (4, 'Dryer'),
-    (5, 'Air conditioning'),
-    (6, 'Heating'),
-    (7, 'Dedicated workspace'),
-    (8, 'TV'),
-    (9, 'Hair dryer'),
-    (10, 'Iron'),
-    (11, 'Pool'),
-    (12, 'Hot tub'),
-    (13, 'Free parking'),
-    (14, 'EV charger'),
-    (15, 'Crib'),
-    (16, 'Gym'),
-    (17, 'BBQ grill'),
-    (18, 'Breakfast'),
-    (19, 'Indoor fireplace'),
-    (20, 'Smoking allowed'),
-    (21, 'Beachfront'),
-    (22, 'Waterfront'),
-    (23, 'Smoke alarm'),
-    (24, 'Carbon monoxide alarm');

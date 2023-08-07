@@ -1,49 +1,49 @@
 package service;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
-    public List<String> amenityNames;
+    //Database credentials
+    private final String CONNECTION = "jdbc:mysql://34.130.232.208/mybnb";
+    private final String USER = "root";
+    private final String PASSWORD = "AtTJ#;s|o|PP$?KJ";
+    private final String CLASSNAME = "com.mysql.cj.jdbc.Driver";
+
+    private Connection conn;
 
     // constructor
-    public Utils() {
-        setupAmenityNames();
-    }
-    private void setupAmenityNames() {
-        amenityNames = new ArrayList<>();
-        amenityNames.add("Wifi");
-        amenityNames.add("Kitchen");
-        amenityNames.add("Washer");
-        amenityNames.add("Dryer");
-        amenityNames.add("Air conditioning");
-        amenityNames.add("Heating");
-        amenityNames.add("Dedicated workspace");
-        amenityNames.add("TV");
-        amenityNames.add("Hair dryer");
-        amenityNames.add("Iron");
-        amenityNames.add("Pool");
-        amenityNames.add("Hot tub");
-        amenityNames.add("Free parking");
-        amenityNames.add("EV charger");
-        amenityNames.add("Crib");
-        amenityNames.add("Gym");
-        amenityNames.add("BBQ grill");
-        amenityNames.add("Breakfast");
-        amenityNames.add("Indoor fireplace");
-        amenityNames.add("Smoking allowed");
-        amenityNames.add("Beachfront");
-        amenityNames.add("Waterfront");
-        amenityNames.add("Smoke alarm");
-        amenityNames.add("Carbon monoxide alarm");
+    public Utils() throws SQLException, ClassNotFoundException {
+        //Register JDBC driver
+        Class.forName(CLASSNAME);
+
+        conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
+        System.out.println("\nSuccessfully connected to MySQL!");
     }
 
     public Boolean isValidAmenity(String amenityName) {
-        return amenityNames.contains(amenityName);
+        return getAllAmenities().contains(amenityName);
     }
 
     public List<String> getAllAmenities(){
-        return amenityNames;
+        try {
+            String sql = "SELECT amenityName FROM Amenities";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            List<String> amenityNames = new ArrayList<String>();
+            while (rs.next()) {
+                amenityNames.add(rs.getString("amenityName"));
+            }
+            return amenityNames;
+        } catch (SQLException e) {
+            System.out.println("[Error getAllAmenities] " + e.getMessage());
+            return null;
+        }
     }
 
     public double round(Double value, int places) {
