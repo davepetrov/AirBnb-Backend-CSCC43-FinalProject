@@ -41,7 +41,7 @@ List any software, tools, or libraries that are required to run your database:
 
 ### Possibility on improvement
 - Replace Command Line Interface (CLI) with Frontend interface
-- Implement more security for improper inputs and configuration
+- Implement more security for invalid inputs (Postalcode, Occupations, Country, etc. )
 - Replace with in-code DB configuration with `.env` configuration, for security
 - Replace JDPC with JPA (For ORM, Reduced boilerplate code, caching, more advanced features, etc)
 

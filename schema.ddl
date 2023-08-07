@@ -1,10 +1,10 @@
 -- -----------------------ENTITIES-------------------------
 CREATE TABLE BNBUser (
     userId INT NOT NULL AUTO_INCREMENT,
-    firstName VARCHAR(255),
-    surName VARCHAR(255),
-    dob DATE,
-    sin VARCHAR(255),
+    firstName VARCHAR(255) NOT NULL,
+    surName VARCHAR(255) NOT NULL,
+    dob DATE NOT NULL,
+    sin VARCHAR(255) NOT NULL,
     occupation VARCHAR(255),
     postalCode VARCHAR(10),
     city VARCHAR(255),
@@ -16,13 +16,13 @@ CREATE TABLE BNBUser (
 
 CREATE TABLE Listing (
     listingId INT NOT NULL AUTO_INCREMENT,
-    host_userId INT,
-    listingType ENUM ('House', 'Apartment', 'Guesthouse', 'Hotel'),
-    locationLat FLOAT,
-    locationLong FLOAT,
-    postalCode VARCHAR(10),
-    city VARCHAR(255),
-    country VARCHAR(255),
+    host_userId INT NOT NULL,
+    listingType ENUM ('House', 'Apartment', 'Guesthouse', 'Hotel') NOT NULL,
+    locationLat FLOAT NOT NULL,
+    locationLong FLOAT NOT NULL,
+    postalCode VARCHAR(10) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    country VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP,
@@ -40,14 +40,13 @@ CREATE TABLE Amenities (
 
 CREATE TABLE Booking (
     bookingId INT NOT NULL AUTO_INCREMENT,
-    listingId INT,
+    listingId INT ,
     renter_userId INT,
     cancelledBy ENUM ('Host', 'Renter'),
     startDate DATE,
     endDate DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                                   ON UPDATE CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (bookingId),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
@@ -55,7 +54,9 @@ CREATE TABLE Booking (
         ON UPDATE CASCADE,
     FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
         ON DELETE SET NULL 
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT CheckDates CHECK (startDate <= endDate)
 );
 
 CREATE TABLE Calendar (
@@ -94,8 +95,7 @@ CREATE TABLE Host_Review_Renter (
     comment TEXT,
     rating INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                                ON UPDATE CURRENT_TIMESTAMP, -- trigger
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (host_userId, renter_userId),
     FOREIGN KEY (host_userId) REFERENCES BNBUser (userId)
