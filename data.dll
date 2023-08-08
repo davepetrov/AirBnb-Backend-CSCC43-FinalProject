@@ -75,7 +75,7 @@ INSERT INTO BNBUser (firstName, surName, dob, sin, occupation, postalCode, city,
 INSERT INTO Listing (host_userId, listingType, locationLat, locationLong, postalCode, city, country) VALUES 
 (1, 'Apartment', 43.70, -79.42, '10000', 'Toronto', 'Canada'),
 (1, 'House', 49.28, -123.12, '10001', 'Toronto', 'Canada'),
-(2, 'Guesthouse', 34.05, -118.25, '20000', 'Los Angeles', 'USA'),
+(1, 'Guesthouse', 49.2823, -123.16, '10002', 'Toronto', 'Canada'),
 (2, 'Hotel', 41.88, -87.63, '20001', 'Los Angeles', 'USA'),
 (2, 'Apartment', 30.26, -97.74, '20002', 'Chicago', 'USA'),
 (3, 'House', 47.60, -122.33, '30000', 'Chicago', 'USA'),
@@ -120,9 +120,9 @@ CALL InsertRecordsIntoCalendar(4, '2023-08-20', '2023-08-21', 60);
 -- listing, renter, startdate, enddate, result
 CALL CreateBookingAndUpdateCalendar(1, 1, '2023-08-07', '2023-08-14', @result1); -- book INTO THE FUTURE 	for 8 days
 CALL CreateBookingAndUpdateCalendar(1, 2, '2023-08-15', '2023-08-21', @result2); -- book INTO THE FUTURE 	for 7 days
-CALL CreateBookingAndUpdateCalendar(1, 3, '2023-08-22', '2023-08-23', @result3); -- book INTO THE FUTURE 	for 2 days
+CALL CreateBookingAndUpdateCalendar(1, 1, '2023-08-22', '2023-08-23', @result3); -- book INTO THE FUTURE 	for 2 days
 CALL CreateBookingAndUpdateCalendar(2, 1, '2023-08-15', '2023-08-21', @result4); -- book INTO THE FUTURE 	for 7 days
-CALL CreateBookingAndUpdateCalendar(2, 6, '2022-01-01', '2022-01-01', @result5); -- booked IN THE PAST 		for 1 day
+CALL CreateBookingAndUpdateCalendar(2, 2, '2022-01-01', '2022-01-01', @result5); -- booked IN THE PAST 		for 1 day
 CALL CreateBookingAndUpdateCalendar(3, 4, '2023-08-3', '2023-08-4', @result6);	 -- book INTO THE FUTURE 	for 2 days
 CALL CreateBookingAndUpdateCalendar(3, 9, '2023-08-5', '2023-08-8', @result7);	 -- book INTO THE FUTURE 	for 4 days
 CALL CreateBookingAndUpdateCalendar(4, 10, '2023-08-20', '2023-08-21', @result8);-- book INTO THE FUTURE 	for 2 days

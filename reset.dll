@@ -13,7 +13,6 @@ DROP TABLE IF EXISTS BNBUser;
 
 DROP TRIGGER IF EXISTS UpdateAvailabilityOnCancelTrigger;
 DROP TRIGGER IF EXISTS UpdateAvailabilityOnUNDOCancelTrigger;
-DROP TRIGGER IF EXISTS CancelFutureBookingsOnListingDeletionTrigger;
 
 -- -----------------------PROCEDURE-------------------------
 DROP PROCEDURE IF EXISTS CreateBookingAndUpdateCalendar;
