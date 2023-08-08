@@ -1,20 +1,19 @@
-##  Database Project: [Your Project Name]
-
+##  Database Project: MyBNB
+**Author:** David Petrov
 ### Purpose
+This project was made for a final project for CSCC43 @ University Of Toronto.
 
-The main objective of this assignment is to create a scalable (backend) mock-application for a popular Rental website, namely AirBnb, which is a popular platform for people to rent out their homes or apartments for short-term stays. We name our application MyBNB. To achieve this objective, I have chosen to develop a Command Line Interface (CLI) for my implementation. This approach has the advantage of saving time on the development of a front-end application, thus allowing me to allocate more time towards designing and implementing the backend. With this in mind, I am able to create a solid and robust back-end application that can easily be integrated with a front-end application in the future.
+The main objective of this project was to create a scalable (backend) mock-application for a popular Rental website, namely AirBnb, which is a popular platform for people to rent out their homes or apartments for short-term stays. This application knock off is named MyBNB. To achieve this objective, I have chosen to develop a Command Line Interface (CLI) for my implementation. This approach has the advantage of saving time on the development of a front-end application, thus allowing me to allocate more time towards designing and implementing the backend. With this in mind, I am able to create a solid and robust back-end application that can easily be integrated with a front-end application in the future.
 
 ### Database Schema
-![ER Diagram - David](https://documents.lucid.app/documents/1cb6cd87-42e5-4e24-b09f-392ba820e687/pages/0_0?a=2494&x=43&y=-262&w=1862&h=1309&store=1&accept=image%2F*&auth=LCA%204b4e284eb2318ce8f369172a3e3553494532ceb9d7d5f654c7700d30f99a8a50-ts%3D1691280983)
+![ER Diagram - David](https://documents.lucid.app/documents/1cb6cd87-42e5-4e24-b09f-392ba820e687/pages/0_0?a=2554&x=43&y=-262&w=1862&h=1309&store=1&accept=image%2F*&auth=LCA%20ae69e1fb69b34fb8c224075d1690f8b274fd7e8c2277725a5f62d40817e53c8e-ts%3D1691426011)
 
 
 ## Getting Started
 
 ### Prerequisites
 
-List any software, tools, or libraries that are required to run your database:
-
-- MySQL Server
+- MySQL 8.1.0+ Server
 - Maven 3.6.3+
 - Java 8+
 
@@ -27,6 +26,7 @@ List any software, tools, or libraries that are required to run your database:
 3. Run any of `tests/{User/Listing/Booking/Calendar/Reports/Review/Search/}ServiceTest.java` files to enter CLI menu. (UserServiceTest.java is recommended to begin the flow)
 4. You can transition between any of the tests to test different functionalities of the application.
 5. Ensure for all services, you setup the database with the following credentials:
+   
 ```sh
     username: root
     password: ZQyRhifF&8t`4L*0
@@ -34,9 +34,12 @@ List any software, tools, or libraries that are required to run your database:
     port: 3306
     host: 34.130.232.208
 ```
+\
+   *(<u>Note:</u> The database host `34.130.232.208` is run using GoogleCloud and for security, only allows access to my personal network. If you choose to run the database, you can PM me your IP and I will create a user for you to access the database.  If you choose to use your own DB host, you can do so by replacing the `host` value with your own)*
 1. Run the following files (In order) in the database:
    1. Dropping all existing data: `/src/man/java/reset.dll` 
    2. Creating db schema (tables, procedures, triggers)  `/src/man/java/schema.dll` 
+*(<u>Note:</u> You can find the DB Schema here)*
    3.  Insert sample (dummy) data:  `/src/man/java/data.dll`
 
 ### Possibility on improvement
@@ -44,9 +47,10 @@ List any software, tools, or libraries that are required to run your database:
 - Implement more security for invalid inputs (Postalcode, Occupations, Country, etc. )
 - Replace with in-code DB configuration with `.env` configuration, for security
 - Replace JDPC with JPA (For ORM, Reduced boilerplate code, caching, more advanced features, etc)
-
+- Hash the creditcard, SIN information in the database for security
+- Use external APIs for searching for nearby listings based off your postalcode
+- Add "MyBNB Wallet" feature. Currently, host doesnt need a creditcard attached. All revenue would go into said wallet, and can be withdrawn to a bank account at a later time.
 
 ### Contact
 David Petrov - dave.petrov@mail.utoronto.ca
-
-Project Link: https://github.com/davepetrov/AirBnb-Backend-CSCC43-FinalProject
+Project Link - https://github.com/davepetrov/AirBnb-Backend-CSCC43-FinalProject
