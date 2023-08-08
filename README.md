@@ -1,4 +1,4 @@
-##  Database Project: MyBNB
+##  Database Project: MyBNB README.MD
 **Author:** David Petrov
 ### Purpose
 This project was made for a final project for CSCC43 @ University Of Toronto.
@@ -24,6 +24,14 @@ The main objective of this project was to create a scalable (backend) mock-appli
    git clone https://github.com/davepetrov/AirBnb-Backend-CSCC43-FinalProject
 2. run `Maven Build`
 3. Run any of `tests/{User/Listing/Booking/Calendar/Reports/Review/Search/}ServiceTest.java` files to enter CLI menu. (UserServiceTest.java is recommended to begin the flow)
+   - Each of these services performs a specific action
+     - **User**: Create a user, delete the user, update creditcard (Remove + update + Add), check if user is eligible to be a renter
+     - **Listing**: Create a listing, remove amenities, add amenities, delete listing
+     - **Booking**: Create a booking, Host cancel booking, Renter cancel booking, Get bookings by listing ID
+     - **Search**: (1) Search availabile listings by latitude + longitude and distance, (2) by exact addreess (postalcode, city, country), (3) by filters
+     - **Calendar**: Update listing availability, price, checking availability of a listing
+     - **Review**: Renter reviews host, Renter reviews listing, Host Reviews Renter (All require a booking in the past week), 
+     - **Reports**: 1-6 (Specified in the assignment handout)
 4. You can transition between any of the tests to test different functionalities of the application.
 5. Ensure for all services, you setup the database with the following credentials:
    
