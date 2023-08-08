@@ -3,5 +3,20 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.debug.settings.onBuildFailureProceed": true,
     "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home",
-    "sqltools.connections": []
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "34.130.232.208",
+            "port": 3306,
+            "driver": "MySQL",
+            "username": "root",
+            "database": "mybnb",
+            "password": "AtTJ#;s|o|PP$?KJ",
+            "name": "c43 db"
+        }
+    ]
 }
