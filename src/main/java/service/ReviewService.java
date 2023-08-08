@@ -20,7 +20,7 @@ public class ReviewService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("\nSuccessfully connected to MySQL!");
+        System.out.println("\n");
     }
 
     public void renterReviewListing(int userId, int listingId, int rating, String comment) {

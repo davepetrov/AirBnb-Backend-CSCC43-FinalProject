@@ -56,7 +56,7 @@ public class SearchServiceTest {
                     System.exit(0);
                     break;
                 case 5:
-                    //TODO: ReportsServiceTest.main(args);
+                    ReportsServiceTest.main(args);
                     break;
                 case 6:
                     ReviewServiceTest.main(args);
@@ -114,6 +114,9 @@ public class SearchServiceTest {
 
         System.out.println("\nEnter radius in kilometers (Default: 10, type -1):");
         radiusKm = scanner.nextInt();
+        if (radiusKm<0){
+            System.out.println("Selecting Default Radius (10)");
+        }
 
         System.out.println("Sort by price or distance? (P/D)");
         while (true) {

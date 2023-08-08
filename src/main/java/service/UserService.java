@@ -22,7 +22,7 @@ public class UserService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("\nSuccessfully connected to MySQL!");
+        System.out.println("\n");
     }
 
     public boolean createUser(String firstname, String surname, Date dob, String occupation, String sin, String postalCode, String city, String country, String creditcard ) {

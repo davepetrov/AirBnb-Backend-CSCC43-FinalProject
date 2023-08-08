@@ -22,7 +22,7 @@ public class ReportsService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("\nSuccessfully connected to MySQL!");
+        System.out.println("\n");
     }
 
     /*  Report 1)
@@ -230,13 +230,22 @@ public class ReportsService {
                     "GROUP BY host_userId, country, city " +
                     "HAVING host_listings > total_listings_in_city * 0.10";
         try {
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
     
             ResultSet resultSet = ps.executeQuery();
-            if (!resultSet.next()) {
-                System.out.println("i) No results found, perhaps no commercial hosts for any city");
+
+            // Check to see if any results
+            int count = 0;
+            while (resultSet.next()) {
+                count++;
+            }
+            if (count == 0) {
+                System.out.println("\ni) No results found, perhaps no commercial hosts for any city");
                 return;
             }
+            // reset rs1
+            resultSet.beforeFirst();
+
 
             
             System.out.println("i) The following hosts are commercial hosts in their specific city:\n");
@@ -260,20 +269,29 @@ public class ReportsService {
                         "HAVING host_listings > total_listings_in_country * 0.10";
                     
         try {
-            PreparedStatement ps = conn.prepareStatement(sql2);
+            PreparedStatement ps = conn.prepareStatement(sql2, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
     
-            ResultSet resultSet = ps.executeQuery();
-            if (!resultSet.next()) {
+            ResultSet rs = ps.executeQuery();
+            // Check to see if any results
+            int count = 0;
+            while (rs.next()) {
+                count++;
+            }
+            if (count == 0) {
                 System.out.println("\nii) No results found, perhaps no commercial hosts for any country");
                 return;
             }
+            // reset rs
+            rs.beforeFirst();
+
             System.out.println("\nii) The following hosts are commercial hosts in their specific Country:\n");
-            while (resultSet.next()) {
-                System.out.println("Host ID: " + resultSet.getInt("host_userId") + 
-                                ", Country: " + resultSet.getString("country") + 
-                                ", Host Listings: " + resultSet.getInt("host_listings") +
-                                ", Total Listings in Country: " + resultSet.getInt("total_listings_in_country") +
-                                ", Percentage Owned: " + resultSet.getDouble("percentage_owned") + "%");
+
+            while (rs.next()) {
+                System.out.println("Host ID: " + rs.getInt("host_userId") + 
+                                ", Country: " + rs.getString("country") + 
+                                ", Host Listings: " + rs.getInt("host_listings") +
+                                ", Total Listings in Country: " + rs.getInt("total_listings_in_country") +
+                                ", Percentage Owned: " + rs.getDouble("percentage_owned") + "%");
             }
         } catch (SQLException e) {
             System.out.println("[IdentifyCommercialHosts Error] " + e.getMessage());
@@ -341,14 +359,23 @@ public class ReportsService {
             }
     
             // Execute sql2
-            PreparedStatement ps2 = conn.prepareStatement(sql2);
+            PreparedStatement ps2 = conn.prepareStatement(sql2, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             ps2.setDate(1, startDate);
             ps2.setDate(2, endDate);
             ResultSet rs2 = ps2.executeQuery();
-            if (!rs2.next()) {
+
+            // Check to see if any results
+            count = 0;
+            while (rs2.next()) {
+                count++;
+            }
+            if (count == 0) {
                 System.out.println("\nii) No results found,  no renters have made any bookings in the given time period where users have made minimum 2 bookings in the same year");
                 return;
             }
+            // reset rs1
+            rs2.beforeFirst();
+
             System.out.println("\nii) Rank the renters by number of bookings in a specific time period per city (Min # of bookings is 2):\n");
             while (rs2.next()) {
                 System.out.println("Rank: " + rs2.getInt("rank_per_city") +

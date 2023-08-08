@@ -29,23 +29,28 @@ public class ListingSearch {
     // to string
     @Override
     public String toString() {
-        Utils utils = new Utils();
-        String listingString = "Listing ID: " + listingId
-            + ", Host Name: " + hostName 
-            + ", Location Lat: " + locationLat 
-            + ", Location Long: " + locationLong
-            + ", Postal Code: " + postalCode
-            + ", City: " + city 
-            + ", Country: " + country;
-        if (price != null) {
-            listingString += ", Price($): " + price ;
+        try{
+            Utils utils = new Utils();
+            String listingString = "Listing ID: " + listingId
+                + ", Host Name: " + hostName 
+                + ", Location Lat: " + locationLat 
+                + ", Location Long: " + locationLong
+                + ", Postal Code: " + postalCode
+                + ", City: " + city 
+                + ", Country: " + country;
+            if (price != null) {
+                listingString += ", Price($): " + price ;
+            }
+            if (availabilityDate != null) {
+                listingString += ", Date: " + availabilityDate ;
+            }
+            if (distanceFromSearch != null) {
+                listingString += ", Distance(km): " + utils.round(distanceFromSearch,2);
+            }
+            return listingString;
+        } catch(Exception e){
+            System.out.println("[Error ListingSearch toString] " + e.getMessage());
+            return null;
         }
-        if (availabilityDate != null) {
-            listingString += ", Date: " + availabilityDate ;
-        }
-        if (distanceFromSearch != null) {
-            listingString += ", Distance(km): " + utils.round(distanceFromSearch,2);
-        }
-        return listingString;
     }
 }

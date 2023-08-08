@@ -27,7 +27,7 @@ public class ReportsServiceTest {
             System.out.println("5. Generate Report 5 (Rank Renters by Bookings)");
             System.out.println("6. Generate Report 6 (Find Max Cancellations)");
             System.out.println("7. Exit");
-            System.out.println("<. Switch to Review Service");
+            System.out.println("8. Switch to Review Service");
 
             System.out.print("\nEnter your choice: ");
 
@@ -161,7 +161,7 @@ public class ReportsServiceTest {
 
             // Ensure startDate is before endDate
             if (startDate.compareTo(endDate) > 0) {
-                System.out.println("Start date must be before end date...);
+                System.out.println("Start date must be before end date...");
             }
             else{
                 break;

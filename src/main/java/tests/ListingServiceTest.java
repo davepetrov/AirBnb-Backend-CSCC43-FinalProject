@@ -145,10 +145,15 @@ public class ListingServiceTest {
         System.out.println("\nEnter ID of Listing:");
         int listingId = scanner.nextInt();
 
-        System.out.println("\nYour listing currently has The following Amenities\n---------------------------------------------");
-        listingService.getAmenities(listingId);
-
-        System.out.println("\nAll possible Amenities\n---------------------------------------------\n" + utils.getAllAmenities());
+        List<String> currentAmenities = listingService.getAmenities(listingId);
+        if (currentAmenities == null){ 
+            System.out.println("Listing does not exist");
+            return;
+        }
+        else if (currentAmenities.isEmpty()){
+            System.out.println("Listing has no amenities");
+            return;
+        }
 
         scanner.nextLine();
         while (true) {
@@ -187,12 +192,18 @@ public class ListingServiceTest {
         System.out.println("\nEnter ID of Listing:");
         int listingId = scanner.nextInt();
 
-        System.out.println("\nYour listing currently has The following Amenities\n---------------------------------------------");
-        listingService.getAmenities(listingId);
+        List<String> currentAmenities = listingService.getAmenities(listingId);
+        if (currentAmenities == null){ 
+            System.out.println("Listing does not exist");
+            return;
+        }
+        else if (currentAmenities.isEmpty()){
+            System.out.println("Listing has no amenities");
+        }
 
         System.out.println("\nAll possible Amenities\n---------------------------------------------\n" + utils.getAllAmenities());
 
-        System.out.println("\n[Host toolkit] Here are some recommended Amenities\n---------------------------------------------");
+        System.out.println("\n[=-=--=-=-=Host toolkit=-=--=-=-=]\nHere are some recommended Amenities\n---------------------------------------------");
         listingService.getRecommendedAmenities(listingId);
 
         scanner.nextLine();

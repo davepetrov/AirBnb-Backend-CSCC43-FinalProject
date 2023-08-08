@@ -23,7 +23,7 @@ public class Utils {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("\nSuccessfully connected to MySQL!");
+        System.out.println("\n");
     }
 
     public Boolean isValidAmenity(String amenityName) {

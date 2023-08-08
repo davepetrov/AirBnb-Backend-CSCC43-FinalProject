@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class ListingService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("\nSuccessfully connected to MySQL!");
+        System.out.println("\n");
     }
     
     
@@ -101,19 +102,21 @@ public class ListingService {
     }
 
 
-    public List<Amenity> getAmenities(int listingId) {
+    public List<String> getAmenities(int listingId) {
         String sql = "SELECT amenityName FROM Listing_Offers_Amenities WHERE listingId = ?;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, listingId);
             ResultSet rs = ps.executeQuery();
-            if (!rs.next()){
-                System.out.println("No amenities found for this listing");
-                return null;
-            }
+
+            List<String> currentAmenities = new ArrayList<String>();
+            System.out.println("\nYour listing currently has the following Amenities\n---------------------------------------------");
+
             while (rs.next()) {
                 System.out.println(rs.getString("amenityName"));
+                currentAmenities.add(rs.getString("amenityName"));
             }
+            return currentAmenities;
         } catch (SQLException e) {
             System.out.println("\n[Get Amenities Failed] " + e.getMessage());
         }
@@ -206,7 +209,7 @@ public class ListingService {
             while (rs.next()) {
                 String amenityName = rs.getString("amenityName");
                 double expectedRevenueIncrease = rs.getDouble("expectedRevenueIncrease");
-                System.out.println("Amenity: " + amenityName + ", Expected Revenue Increase: " + expectedRevenueIncrease);
+                System.out.println("Amenity: " + amenityName + ", Expected Revenue Increase: $" + expectedRevenueIncrease);
             }
     
         } catch (SQLException e) {

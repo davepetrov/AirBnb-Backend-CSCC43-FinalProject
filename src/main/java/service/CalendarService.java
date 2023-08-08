@@ -28,7 +28,6 @@ public class CalendarService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("\nSuccessfully connected to MySQL!");
     }
 
     public boolean updateListingAvailabilityAndPrice(int listingId, Map<Date, Double> availabilityAndPrice) {
@@ -151,7 +150,7 @@ public class CalendarService {
                 isAvailable = rs.getBoolean("isAvailable");
                 System.out.println("Listing is " + (isAvailable ? "AVAILABLE" : "NOT AVAILABLE") + " on this date.");
             } else {
-                System.out.println("Listing is NOT AVAILABLE on this date. (Host has not selected availability)");
+                System.out.println("Listing is NOT AVAILABLE on this date. (Listing doesn't exist OR host has not selected availability)");
             }
 
             rs.close();

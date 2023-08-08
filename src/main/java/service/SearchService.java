@@ -32,7 +32,7 @@ public class SearchService {
         Class.forName(CLASSNAME);
         
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("\nSuccessfully connected to MySQL!");
+        System.out.println("\n");
     }
         
     public List<ListingSearch> findAvailableListingsByLatitudeLongitude(Date startDate, Date endDate, double latitude, double longitude, int radiusKm, boolean isAscending, SortBy sort){
@@ -178,7 +178,7 @@ public class SearchService {
                     " JOIN Calendar AS c ON l.listingId = c.listingId" +
                     " JOIN Listing_Offers_Amenities AS la ON l.listingId = la.listingId" +
                     " JOIN BNBUser AS u ON l.host_userId = u.userId" +
-                    " JOIN Amenities AS a ON a.amenityId = la.amenityId" +
+                    " JOIN Amenities AS a ON a.amenityName = la.amenityName" +
                     " WHERE c.bookingId IS NULL AND c.price>=0";
 
 

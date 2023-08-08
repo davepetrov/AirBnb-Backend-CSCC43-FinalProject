@@ -30,7 +30,6 @@ public class BookingService {
         Class.forName(CLASSNAME);
 
         conn = DriverManager.getConnection(CONNECTION,USER,PASSWORD);
-        System.out.println("\nSuccessfully connected to MySQL!");
     }
 
     public boolean createBooking(int listingId, int renterId, Date startDate, Date endDate) {

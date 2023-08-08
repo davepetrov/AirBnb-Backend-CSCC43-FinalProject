@@ -108,7 +108,7 @@ public class CalendarServiceTest {
         if (isFirstTimeHost){
             Double recommendedPrice = calendarService.getRecommendedPrice(listingId);
             if (recommendedPrice != null && recommendedPrice > 0.0){
-                System.out.println("\nWe see that this is your first time hosting this listing on MyBNB!\n[Host toolkit] MyBNB recommends you a price for your area: $"+ utils.round(recommendedPrice,2));
+                System.out.println("\n[=-=--=-=-=Host toolkit=-=--=-=-=]\nWe see that this is your first time hosting this listing on MyBNB!\nMyBNB recommends you a price for your area: $"+ utils.round(recommendedPrice,2));
             }
             else{
             System.out.println("\nWe see that this is your first time hosting this listing on MyBNB!\n Congratulations, you're the first Host in your area! (We don't have enough data to recommend you a price in your area ;-; )) \n"+
@@ -209,12 +209,6 @@ public class CalendarServiceTest {
 
                     // validation for start and end date
                     while (true){
-                        System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
-                        startDate = Date.valueOf(scanner.next());
-
-                        System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
-                        endDate = Date.valueOf(scanner.next());
-
                         // ensure startDate is before endDate
                         if (startDate.compareTo(endDate) > 0) {
                             System.out.println("[Error] Start date must be before end date...");
@@ -268,7 +262,7 @@ public class CalendarServiceTest {
         System.out.println("\nEnter date (yyyy-mm-dd):");
         date = Date.valueOf(scanner.next());
 
-        System.out.print("\nAvailability for Listing "+ listingId+": \n ---------------------\n");
+        System.out.print("\nAvailability for Listing "+ listingId+": \n ------------------------\n");
         calendarService.getAvailabilityStatus(listingId, date);
     }
 
@@ -302,7 +296,7 @@ public class CalendarServiceTest {
 
         dateAvailabilityMap = calendarService.getAvailabilityStatus(listingId, startDate, endDate);
         
-        System.out.print("\nAvailability for Listing: "+ listingId+" \n ------------\n");
+        System.out.print("\nAvailability for Listing: "+ listingId+" \n ---------------------------\n");
         for (Map.Entry<Date, String> entry : dateAvailabilityMap.entrySet()) {
             LocalDate localDate = entry.getKey().toLocalDate();
             String dayOfWeek = localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
