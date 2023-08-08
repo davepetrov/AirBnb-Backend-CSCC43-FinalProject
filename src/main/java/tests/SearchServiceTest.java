@@ -212,6 +212,9 @@ public class SearchServiceTest {
 
         System.out.println("\nEnter postal code (or leave empty for any):");
         postalCode = scanner.nextLine();
+        if (postalCode.isEmpty()) {
+            postalCode = null;
+        }
         amenities = new ArrayList<>();
         
         System.out.println("\nAll possible Amenities\n--------------------------\n" + utils.getAllAmenities());

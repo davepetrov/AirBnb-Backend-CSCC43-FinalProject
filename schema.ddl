@@ -50,7 +50,7 @@ CREATE TABLE Booking (
 
     PRIMARY KEY (bookingId),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
     FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
         ON DELETE SET NULL 
@@ -68,7 +68,7 @@ CREATE TABLE Calendar (
 
     PRIMARY KEY (listingId, availabilityDate),
     FOREIGN KEY (listingId) REFERENCES Listing (listingId)
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
     FOREIGN KEY (bookingId) REFERENCES Booking (bookingId)
         ON DELETE CASCADE
@@ -115,7 +115,8 @@ CREATE TABLE Renter_Review_Host (
     rating INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                                   ON UPDATE CURRENT_TIMESTAMP, -- trigger
+                                   ON UPDATE CURRENT_TIMESTAMP,
+
     PRIMARY KEY (renter_userId, host_userId),
     FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
         ON DELETE CASCADE
@@ -133,7 +134,7 @@ CREATE TABLE Renter_Review_Listing (
     rating INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                                   ON UPDATE CURRENT_TIMESTAMP, -- trigger
+                                   ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (renter_userId, listingId),
     FOREIGN KEY (renter_userId) REFERENCES BNBUser (userId)
@@ -263,20 +264,4 @@ END IF;
 
 END;
 
-$$ DELIMITER;
-
--- 3. Trigger for when a listing is deleted, Cancel all future bookings (By Host)
-DELIMITER $$ 
-CREATE TRIGGER CancelFutureBookingsOnListingDeletionTrigger
-AFTER
-    DELETE ON Listing FOR EACH ROW BEGIN
-UPDATE
-    Booking
-SET
-    cancelledBy = 'Host'
-WHERE
-    listingId = OLD.listingId
-    AND startDate > CURDATE();
-
-END;
-$$ DELIMITER
+$$

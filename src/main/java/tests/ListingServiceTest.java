@@ -192,7 +192,7 @@ public class ListingServiceTest {
 
         System.out.println("\nAll possible Amenities\n---------------------------------------------\n" + utils.getAllAmenities());
 
-        System.out.println("\n[Host toolkit]Here are some recommended Amenities\n---------------------------------------------");
+        System.out.println("\n[Host toolkit] Here are some recommended Amenities\n---------------------------------------------");
         listingService.getRecommendedAmenities(listingId);
 
         scanner.nextLine();

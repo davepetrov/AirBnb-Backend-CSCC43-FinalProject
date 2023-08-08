@@ -68,17 +68,19 @@ public class ReportsServiceTest {
     }
 
     private static void generateReport1(Scanner scanner, ReportsService reportsService) {
-        System.out.println("Generate Report 1: ");
         String city;
         String postalCode;
         Date startDate;
         Date endDate;
 
-        System.out.println("\nEnter cCity (Required):");
+        System.out.println("\nEnter City (Required):");
         city = scanner.nextLine();
 
         System.out.println("\nEnter postal code (or leave empty for any):");
         postalCode = scanner.nextLine();
+        if (postalCode.isEmpty()) {
+            postalCode = null;
+        }
 
         System.out.println("\nEnter start date (YYYY-MM-DD)(Required):");
         startDate = Date.valueOf(scanner.nextLine());
@@ -86,30 +88,32 @@ public class ReportsServiceTest {
         System.out.println("\nEnter end date (YYYY-MM-DD)(Required):");
         endDate = Date.valueOf(scanner.nextLine());
         
+        System.out.println("\nReport 1 Generation\n-------------------");
         reportsService.TotalBookingsInSpecificDateRangeByCityOrPostalCode(city, postalCode, startDate, endDate);
     }
 
     private static void generateReport2(Scanner scanner, ReportsService reportsService) {
-        System.out.println("Generate Report 2: ");
-        String country = null;
-        String city = null;
-        String postalCode = null;
+        int selection;
 
-        System.out.println("\nEnter Country (Required):");
-        country = scanner.nextLine();
+        System.out.println("Report and provide the total number of listings per:\n" +
+                            "        Select 1. Country, \n" +
+                            "        Select 2. Country and City\n" +
+                            "        Select 3. Country, City and Postal code");
+        selection = scanner.nextInt();
+        while(true){
+            if(selection == 1 || selection == 2 || selection == 3){
+                break;
+            }
+            System.out.println("\nInvalid selection, please try again.");
+            selection = scanner.nextInt();
+        }
 
-        System.out.println("\nEnter City (or leave empty for any):");
-        city = scanner.nextLine();
-
-        System.out.println("\nEnter Postal code (or leave empty for any):");
-        postalCode = scanner.nextLine();
-
-        reportsService.TotalNumberOfListings(country, city, postalCode);
+        System.out.println("\nReport 2 Generation\n-------------------");
+        reportsService.TotalNumberOfListings(selection);
     }
 
 
     private static void generateReport3(Scanner scanner, ReportsService reportsService) {
-        System.out.println("Generate Report 3");
         String country;
         String city;
 
@@ -118,17 +122,20 @@ public class ReportsServiceTest {
 
         System.out.println("\nEnter city (or leave empty for any):");
         city = scanner.nextLine();
+        if (city.isEmpty()) {
+            city = null;
+        }
 
+        System.out.println("\nReport 3 Generation\n-------------------");
         reportsService.RankHostsByNumberOfListings(country, city);
     }
 
     private static void generateReport4(Scanner scanner, ReportsService reportsService) {
-        System.out.println("Generate Report 4");
+        System.out.println("\nReport 4 Generation\n-------------------");
         reportsService.IdentifyCommercialHosts();
     }
 
     private static void generateReport5(Scanner scanner, ReportsService reportsService) {
-        System.out.println("Generate Report 5");
         Date startDate;
         Date endDate;
         int year;
@@ -139,26 +146,23 @@ public class ReportsServiceTest {
         System.out.println("\nEnter end date (YYYY-MM-DD)(Required):");
         endDate = Date.valueOf(scanner.nextLine());
 
-        System.out.println("\nEnter the year (Required):");
-        year = scanner.nextInt();
-        scanner.nextLine();
-
-        reportsService.RankRentersByBookings(startDate, endDate, year);
+        System.out.println("\nReport 5 Generation\n-------------------");
+        reportsService.RankRentersByBookings(startDate, endDate);
     }
 
     private static void generateReport6(Scanner scanner, ReportsService reportsService) {
-        System.out.println("Generate Report 6");
         int year;
 
         System.out.println("\nEnter the year (Required):");
         year = scanner.nextInt();
         scanner.nextLine(); 
 
+        System.out.println("\nReport 6 Generation\n-------------------");
         reportsService.FindMaxCancellationsForTheYear(year);
     }
 
-    private static void generateReport7(Scanner scanner, ReportsService reportsService) {
-        System.out.println("Generate Report 7");
+    private static void generateReport7(Scanner scanner, ReportsService reportsService) {    
+        System.out.println("\nReport 7 Generation\n-------------------");
         reportsService.FindPopularNounPhrasesFromRenterOnListingComments();
     }
 }
