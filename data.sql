@@ -75,7 +75,7 @@ INSERT INTO BNBUser (firstName, surName, dob, sin, occupation, postalCode, city,
 INSERT INTO Listing (host_userId, listingType, locationLat, locationLong, postalCode, city, country) VALUES 
 (1, 'Apartment', 43.70, -79.42, '10000', 'Toronto', 'Canada'),
 (1, 'House', 49.28, -123.12, '10001', 'Toronto', 'Canada'),
-(2, 'Guesthouse', 34.05, -118.25, '20000', 'Los Angeles', 'USA'),
+(1, 'Guesthouse', 49.2823, -123.16, '10002', 'Toronto', 'Canada'),
 (2, 'Hotel', 41.88, -87.63, '20001', 'Los Angeles', 'USA'),
 (2, 'Apartment', 30.26, -97.74, '20002', 'Chicago', 'USA'),
 (3, 'House', 47.60, -122.33, '30000', 'Chicago', 'USA'),
