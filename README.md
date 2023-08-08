@@ -42,7 +42,8 @@ The main objective of this project was to create a scalable (backend) mock-appli
 *(<u>Note:</u> You can find the DB Schema here)*
    3.  Insert sample (dummy) data:  `/src/man/java/data.dll`
 
-### Possibility on improvement
+### Possibilities on Improvement
+- Optimize: Make the database more efficient, in terms of complexity (add indexing, query optimization, caching, etc. )
 - Replace Command Line Interface (CLI) with Frontend interface
 - Implement more security for invalid inputs (Postalcode, Occupations, Country, etc. )
 - Replace with in-code DB configuration with `.env` configuration, for security

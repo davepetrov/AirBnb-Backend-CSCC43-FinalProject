@@ -81,11 +81,22 @@ public class SearchServiceTest {
 
             if (input.equals("y") || input.equals("yes")) {
 
-                System.out.println("\nEnter start date (yyyy-MM-dd):");
-                startDate = Date.valueOf(scanner.nextLine());
+                // validation for start and end date
+                while (true){
+                    System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
+                    startDate = Date.valueOf(scanner.next());
 
-                System.out.println("\nEnter end date (yyyy-MM-dd):");
-                endDate = Date.valueOf(scanner.nextLine());
+                    System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
+                    endDate = Date.valueOf(scanner.next());
+
+                    // Ensure startDate is before endDate
+                    if (startDate.compareTo(endDate) > 0) {
+                        System.out.println("Start date must be before end date...Try again");
+                    }
+                    else{
+                        break;
+                    }
+                }
 
                 break;
             } else if (input.equals("n") || input.equals("no")) {
@@ -153,11 +164,22 @@ public class SearchServiceTest {
 
             if (input.equals("y") || input.equals("yes")) {
 
-                System.out.println("\nEnter start date (yyyy-MM-dd):");
-                startDate = Date.valueOf(scanner.nextLine());
+                // validation for start and end date
+                while (true){
+                    System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
+                    startDate = Date.valueOf(scanner.next());
 
-                System.out.println("\nEnter end date (yyyy-MM-dd):");
-                endDate = Date.valueOf(scanner.nextLine());
+                    System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
+                    endDate = Date.valueOf(scanner.next());
+
+                    // Ensure startDate is before endDate
+                    if (startDate.compareTo(endDate) > 0) {
+                        System.out.println("Start date must be before end date...Try again");
+                    }
+                    else{
+                        break;
+                    }
+                }
 
                 break;
             } else if (input.equals("n") || input.equals("no")) {
@@ -196,11 +218,22 @@ public class SearchServiceTest {
 
             if (input.equals("y") || input.equals("yes")) {
 
-                System.out.println("\nEnter start date (yyyy-MM-dd):");
-                startDate = Date.valueOf(scanner.nextLine());
+                // validation for start and end date
+                while (true){
+                    System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
+                    startDate = Date.valueOf(scanner.next());
 
-                System.out.println("\nEnter end date (yyyy-MM-dd):");
-                endDate = Date.valueOf(scanner.nextLine());
+                    System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
+                    endDate = Date.valueOf(scanner.next());
+
+                    // Ensure startDate is before endDate
+                    if (startDate.compareTo(endDate) > 0) {
+                        System.out.println("Start date must be before end date...Try again");
+                    }
+                    else{
+                        break;
+                    }
+                }
 
                 break;
             } else if (input.equals("n") || input.equals("no")) {

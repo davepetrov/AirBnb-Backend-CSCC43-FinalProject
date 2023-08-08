@@ -80,11 +80,22 @@ public class BookingServiceTest {
         System.out.println("\nEnter ID of Renter (Required):");
         renterId = scanner.nextInt();
 
-        System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
-        startDate = Date.valueOf(scanner.next());
+        // validation for start and end date
+        while (true){
+            System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
+            startDate = Date.valueOf(scanner.next());
 
-        System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
-        endDate = Date.valueOf(scanner.next());
+            System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
+            endDate = Date.valueOf(scanner.next());
+
+            // ensure startDate is before endDate
+            if (startDate.compareTo(endDate) > 0) {
+                System.out.println("Start date must be before end date...Try again dummy");
+            }
+            else{
+                break;
+            }
+        }
 
         bookingService.createBooking(listingId, renterId, startDate, endDate);
     }

@@ -82,11 +82,22 @@ public class ReportsServiceTest {
             postalCode = null;
         }
 
-        System.out.println("\nEnter start date (YYYY-MM-DD)(Required):");
-        startDate = Date.valueOf(scanner.nextLine());
+        // validation for start and end date
+        while (true){
+            System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
+            startDate = Date.valueOf(scanner.next());
 
-        System.out.println("\nEnter end date (YYYY-MM-DD)(Required):");
-        endDate = Date.valueOf(scanner.nextLine());
+            System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
+            endDate = Date.valueOf(scanner.next());
+
+            // Ensure startDate is before endDate
+            if (startDate.compareTo(endDate) > 0) {
+                System.out.println("Start date must be before end date...Try again");
+            }
+            else{
+                break;
+            }
+        }
         
         System.out.println("\nReport 1 Generation\n-------------------");
         reportsService.TotalBookingsInSpecificDateRangeByCityOrPostalCode(city, postalCode, startDate, endDate);
@@ -140,11 +151,22 @@ public class ReportsServiceTest {
         Date endDate;
         int year;
 
-        System.out.println("\nEnter start date (YYYY-MM-DD)(Required):");
-        startDate = Date.valueOf(scanner.nextLine());
+        // validation for start and end date
+        while (true){
+            System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
+            startDate = Date.valueOf(scanner.next());
 
-        System.out.println("\nEnter end date (YYYY-MM-DD)(Required):");
-        endDate = Date.valueOf(scanner.nextLine());
+            System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
+            endDate = Date.valueOf(scanner.next());
+
+            // Ensure startDate is before endDate
+            if (startDate.compareTo(endDate) > 0) {
+                System.out.println("Start date must be before end date...);
+            }
+            else{
+                break;
+            }
+        }
 
         System.out.println("\nReport 5 Generation\n-------------------");
         reportsService.RankRentersByBookings(startDate, endDate);

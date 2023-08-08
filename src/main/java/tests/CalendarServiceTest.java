@@ -117,11 +117,23 @@ public class CalendarServiceTest {
         }
 
         if (multipleDays.equals("y") || multipleDays.equals("yes")) {
-            System.out.println("\nEnter start date (yyyy-mm-dd):");
-            startDate = Date.valueOf(scanner.nextLine());
+            
+            // validation for start and end date
+            while (true){
+                System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
+                startDate = Date.valueOf(scanner.next());
 
-            System.out.println("\nEnter end date (yyyy-mm-dd):");
-            endDate = Date.valueOf(scanner.nextLine());
+                System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
+                endDate = Date.valueOf(scanner.next());
+
+                // ensure startDate is before endDate
+                if (startDate.compareTo(endDate) > 0) {
+                    System.out.println("Start date must be before end date...Try again dummy");
+                }
+                else{
+                    break;
+                }
+            }
 
             datesPrices = new HashMap<>();
             for (LocalDate date = startDate.toLocalDate(); !date.isAfter(endDate.toLocalDate()); date = date.plusDays(1)) {
@@ -194,6 +206,24 @@ public class CalendarServiceTest {
                 try {
                     startDate = Date.valueOf(startDateString);
                     endDate = Date.valueOf(endDateString);
+
+                    // validation for start and end date
+                    while (true){
+                        System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
+                        startDate = Date.valueOf(scanner.next());
+
+                        System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
+                        endDate = Date.valueOf(scanner.next());
+
+                        // ensure startDate is before endDate
+                        if (startDate.compareTo(endDate) > 0) {
+                            System.out.println("[Error] Start date must be before end date...");
+                            return;
+                        }
+                        else{
+                            break;
+                        }
+                    }
     
                     System.out.println("\nEnter price:");
                     float price = scanner.nextFloat();
@@ -201,9 +231,11 @@ public class CalendarServiceTest {
     
                     calendarService.updateListingPrice(listingId, startDate, endDate, price);
                     validInput = true;
+
+
                 } catch (IllegalArgumentException e) {
                     System.out.println("Invalid date format. Please try again.");
-                }
+                }                
             } else if(updateRangeAnswer.equals("n")) {
                 System.out.println("\nEnter date (yyyy-mm-dd):");
                 String dateString = scanner.nextLine();
@@ -249,11 +281,24 @@ public class CalendarServiceTest {
         System.out.println("\nEnter ID of Listing:");
         listingId = scanner.nextInt();
 
-        System.out.println("\nEnter start date (yyyy-mm-dd):");
-        startDate = Date.valueOf(scanner.next());
+        
+        // validation for start and end date
+        while (true){
+            System.out.println("\nEnter start date (yyyy-mm-dd)(Required):");
+            startDate = Date.valueOf(scanner.next());
 
-        System.out.println("\nEnter end date (yyyy-mm-dd):");
-        endDate = Date.valueOf(scanner.next());
+            System.out.println("\nEnter end date (yyyy-mm-dd)(Required):");
+            endDate = Date.valueOf(scanner.next());
+
+            // ensure startDate is before endDate
+            if (startDate.compareTo(endDate) > 0) {
+                System.out.println("[Error] Start date must be before end date...");
+                return;
+            }
+            else{
+                break;
+            }
+        }
 
         dateAvailabilityMap = calendarService.getAvailabilityStatus(listingId, startDate, endDate);
         
